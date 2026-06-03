@@ -116,7 +116,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                         border: OutlineInputBorder(),
                       ),
                       keyboardType: TextInputType.emailAddress,
-                      enabled: _editingId == null,
+                      enabled: _emailController.text != 'griyamahiralquran@gmail.com',
                       validator: (v) {
                         if (v == null || v.isEmpty) return 'Email wajib diisi';
                         if (!v.contains('@')) return 'Email tidak valid';
@@ -264,9 +264,22 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                                 } else {
                                   // Update existing user
                                   try {
+                                    final oldUser = _usersList.firstWhere((u) => u['id'] == _editingId);
+                                    final oldEmail = oldUser['email'];
+                                    final newEmail = _emailController.text.trim();
+                                    
+                                    if (oldEmail != newEmail) {
+                                      await SupabaseService.client.rpc('admin_update_user_auth', params: {
+                                        'user_id': _editingId,
+                                        'new_email': newEmail,
+                                        'new_password': null,
+                                      });
+                                    }
+
                                     await SupabaseService.client
                                         .from('users')
                                         .update({
+                                          'email': newEmail,
                                           'name': _nameController.text.trim(),
                                           'role': _selectedRole,
                                           'unit_id': _selectedUnitId,
@@ -315,24 +328,73 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     );
   }
   
-  Future<void> _resetPassword(String email) async {
-    try {
-      await SupabaseService.auth.resetPasswordForEmail(email);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Email reset password telah dikirim'),
-            backgroundColor: Colors.green,
+  Future<void> _adminChangePasswordDialog(String userId, String email) async {
+    final passwordController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Reset Password - $email'),
+        content: Form(
+          key: formKey,
+          child: TextFormField(
+            controller: passwordController,
+            decoration: const InputDecoration(
+              labelText: 'Password Baru',
+              border: OutlineInputBorder(),
+            ),
+            obscureText: true,
+            validator: (v) {
+              if (v == null || v.isEmpty) return 'Password tidak boleh kosong';
+              if (v.length < 6) return 'Password minimal 6 karakter';
+              return null;
+            },
           ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Gagal: ${e.toString()}'),
-          backgroundColor: Colors.red,
         ),
-      );
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                Navigator.pop(ctx, true);
+              }
+            },
+            child: const Text('Simpan'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      try {
+        await SupabaseService.client.rpc('admin_update_user_auth', params: {
+          'user_id': userId,
+          'new_email': null,
+          'new_password': passwordController.text,
+        });
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Password berhasil diperbarui'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Gagal memperbarui password: ${e.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
     }
   }
   
@@ -484,8 +546,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                         children: [
                           IconButton(
                             icon: const Icon(Icons.password, color: Colors.orange),
-                            onPressed: () => _resetPassword(user['email']),
-                            tooltip: 'Reset Password',
+                            onPressed: () => _adminChangePasswordDialog(user['id'], user['email']),
+                            tooltip: 'Ganti Password',
                           ),
                           IconButton(
                             icon: Icon(

@@ -13,6 +13,9 @@ import '../shared/input_screen.dart';
 import '../shared/laporan_screen_mobile.dart';
 
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+
 class DashboardOperator extends StatefulWidget {
   const DashboardOperator({super.key});
 
@@ -22,6 +25,71 @@ class DashboardOperator extends StatefulWidget {
 
 class _DashboardOperatorState extends State<DashboardOperator> {
   int _selectedIndex = 0;
+
+  void _showChangePasswordDialog(BuildContext context) {
+    final passwordController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Ganti Password'),
+        content: Form(
+          key: formKey,
+          child: TextFormField(
+            controller: passwordController,
+            decoration: const InputDecoration(
+              labelText: 'Password Baru',
+              border: OutlineInputBorder(),
+            ),
+            obscureText: true,
+            validator: (v) {
+              if (v == null || v.isEmpty) return 'Password tidak boleh kosong';
+              if (v.length < 6) return 'Password minimal 6 karakter';
+              return null;
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () async {
+              if (formKey.currentState!.validate()) {
+                try {
+                  await SupabaseService.client.auth.updateUser(
+                    UserAttributes(password: passwordController.text),
+                  );
+                  if (context.mounted) {
+                    Navigator.pop(ctx);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Password berhasil diubah'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Gagal mengubah password: ${e.toString()}'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              }
+            },
+            child: const Text('Simpan'),
+          ),
+        ],
+      ),
+    );
+  }
+
   bool _isOnline = true;
   int _offlineCount = 0;
   
@@ -151,6 +219,14 @@ class _DashboardOperatorState extends State<DashboardOperator> {
                     ],
                   ),
                   actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(_);
+                        _showChangePasswordDialog(context);
+                      },
+                      style: TextButton.styleFrom(foregroundColor: Colors.orange),
+                      child: const Text('Ganti Password'),
+                    ),
                     TextButton(
                       onPressed: () => Navigator.pop(_),
                       child: const Text('Tutup'),
