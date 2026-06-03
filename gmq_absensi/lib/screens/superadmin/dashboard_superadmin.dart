@@ -249,6 +249,15 @@ class _DashboardSuperadminState extends State<DashboardSuperadmin> {
 class HomeScreenSuperadmin extends StatelessWidget {
   const HomeScreenSuperadmin({super.key});
 
+  String _getCurrentMonthIndonesian() {
+    const months = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+    final now = DateTime.now();
+    return months[now.month - 1];
+  }
+
   @override
   Widget build(BuildContext context) {
     final masterProvider = Provider.of<MasterProvider>(context);
@@ -365,7 +374,7 @@ class HomeScreenSuperadmin extends StatelessWidget {
                         _buildStatCard(
                           Icons.calendar_today,
                           'Bulan Ini',
-                          'Jan',
+                          _getCurrentMonthIndonesian(),
                           Colors.red,
                           context,
                         ),
