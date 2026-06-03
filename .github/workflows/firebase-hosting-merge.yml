@@ -29,7 +29,7 @@ jobs:
         working-directory: gmq_absensi
 
       - name: Build Flutter Web
-        run: flutter build web --release --web-renderer canvaskit
+        run: flutter build web --release
         working-directory: gmq_absensi
 
       - name: Deploy to Firebase Hosting
