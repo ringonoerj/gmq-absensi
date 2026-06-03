@@ -1,0 +1,709 @@
+<mxfile host="Electron">
+  <diagram name="Page-1" id="G6xCoEURUueioUT2HQJx">
+    <mxGraphModel dx="1269" dy="692" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4800" pageHeight="3600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="KDllf0GMDuVZENMzyCbS-1" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;fillColor=light-dark(#eeeeee,#1f2020);strokeColor=light-dark(#999999,#cccccc);fontColor=light-dark(#333333,#cccccc);" value="Superadmin" vertex="1">
+          <mxGeometry height="3562" width="150" x="20" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-2" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;fillColor=light-dark(#eeeeee,#1f2020);strokeColor=light-dark(#999999,#cccccc);fontColor=light-dark(#333333,#cccccc);" value="ManageUsersScreen" vertex="1">
+          <mxGeometry height="3562" width="163" x="361" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-3" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;fillColor=light-dark(#eeeeee,#1f2020);strokeColor=light-dark(#999999,#cccccc);fontColor=light-dark(#333333,#cccccc);" value="MasterProvider" vertex="1">
+          <mxGeometry height="3562" width="150" x="574" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-4" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;fillColor=light-dark(#eeeeee,#1f2020);strokeColor=light-dark(#999999,#cccccc);fontColor=light-dark(#333333,#cccccc);" value="SupabaseAuth" vertex="1">
+          <mxGeometry height="3562" width="150" x="774" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-5" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;fillColor=light-dark(#eeeeee,#1f2020);strokeColor=light-dark(#999999,#cccccc);fontColor=light-dark(#333333,#cccccc);" value="SupabaseAPI" vertex="1">
+          <mxGeometry height="3562" width="150" x="974" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-6" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;fillColor=light-dark(#eeeeee,#1f2020);strokeColor=light-dark(#999999,#cccccc);fontColor=light-dark(#333333,#cccccc);" value="Database" vertex="1">
+          <mxGeometry height="3562" width="150" x="1174" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-7" parent="1" style="shape=umlFrame;dashed=1;pointerEvents=0;dropTarget=0;strokeColor=#B3B3B3;height=20;width=0;fillColor=light-dark(#eeeeee,#1f2020);fontColor=light-dark(#333333,#cccccc);" value="" vertex="1">
+          <mxGeometry height="1046" width="1224" x="60" y="143" as="geometry" />
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-8" parent="KDllf0GMDuVZENMzyCbS-7" style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="20" width="1224" as="geometry" />
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-9" parent="1" style="shape=umlFrame;dashed=1;pointerEvents=0;dropTarget=0;strokeColor=#B3B3B3;height=20;width=0;fillColor=light-dark(#eeeeee,#1f2020);fontColor=light-dark(#333333,#cccccc);" value="" vertex="1">
+          <mxGeometry height="830" width="1224" x="60" y="1199" as="geometry" />
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-10" parent="KDllf0GMDuVZENMzyCbS-9" style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="20" width="1224" as="geometry" />
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-11" parent="1" style="shape=umlFrame;dashed=1;pointerEvents=0;dropTarget=0;strokeColor=#B3B3B3;height=20;width=0;fillColor=light-dark(#eeeeee,#1f2020);fontColor=light-dark(#333333,#cccccc);" value="" vertex="1">
+          <mxGeometry height="854" width="1224" x="60" y="2039" as="geometry" />
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-12" parent="KDllf0GMDuVZENMzyCbS-11" style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="20" width="1224" as="geometry" />
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-13" parent="1" style="shape=umlFrame;dashed=1;pointerEvents=0;dropTarget=0;strokeColor=#B3B3B3;height=20;width=0;fillColor=light-dark(#eeeeee,#1f2020);fontColor=light-dark(#333333,#cccccc);" value="" vertex="1">
+          <mxGeometry height="584" width="1224" x="60" y="2903" as="geometry" />
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-14" parent="KDllf0GMDuVZENMzyCbS-13" style="text;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="20" width="1224" as="geometry" />
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-15" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-1" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-2" value="Klik tombol Tambah">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="277" y="245" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-16" parent="KDllf0GMDuVZENMzyCbS-15" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="1" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-181" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-17" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-2" style="curved=1;endArrow=block;rounded=0;" target="KDllf0GMDuVZENMzyCbS-2" value="showForm">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="493" y="299" />
+              <mxPoint x="493" y="329" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-18" parent="KDllf0GMDuVZENMzyCbS-17" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="2" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-57" y="-22" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-19" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-2" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-1" value="Tampilkan dialog form">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="280" y="383" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-20" parent="KDllf0GMDuVZENMzyCbS-19" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="3" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="167" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-21" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-1" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-2" value="Isi email nama role dan unit">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="277" y="437" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-22" parent="KDllf0GMDuVZENMzyCbS-21" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="4" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-181" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-23" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-1" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-2" value="Klik Simpan">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="277" y="491" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-24" parent="KDllf0GMDuVZENMzyCbS-23" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="5" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-181" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-25" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-2" style="curved=1;endArrow=block;rounded=0;" target="KDllf0GMDuVZENMzyCbS-2" value="Validasi form">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="493" y="545" />
+              <mxPoint x="493" y="575" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-26" parent="KDllf0GMDuVZENMzyCbS-25" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="6" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-57" y="-22" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-27" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-2" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-4" value="createUserWithEmail">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="654" y="629" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-28" parent="KDllf0GMDuVZENMzyCbS-27" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="7" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-210.75" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-29" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-4" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-6" value="Insert into auth.users">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1057" y="683" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-30" parent="KDllf0GMDuVZENMzyCbS-29" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="8" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-207.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-31" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-6" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-4" value="Return userId">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1060" y="737" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-32" parent="KDllf0GMDuVZENMzyCbS-31" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="9" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="193.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-33" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-4" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-2" value="userId">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="657" y="791" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-34" parent="KDllf0GMDuVZENMzyCbS-33" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="10" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="196.75" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-35" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-2" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-3" value="addData to users">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="554" y="845" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-36" parent="KDllf0GMDuVZENMzyCbS-35" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="11" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-110.75" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-37" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-3" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-5" value="insert into users">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="857" y="899" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-38" parent="KDllf0GMDuVZENMzyCbS-37" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="12" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-207.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-39" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-5" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-6" value="INSERT user data">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1157" y="953" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-40" parent="KDllf0GMDuVZENMzyCbS-39" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="13" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-107.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-41" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-6" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-5" value="Success">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1160" y="1007" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-42" parent="KDllf0GMDuVZENMzyCbS-41" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="14" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="93.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-43" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-5" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-3" value="Success">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="860" y="1061" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-44" parent="KDllf0GMDuVZENMzyCbS-43" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="15" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="193.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-45" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-3" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-2" value="Success">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="557" y="1115" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-46" parent="KDllf0GMDuVZENMzyCbS-45" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="16" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="96.75" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-47" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-2" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-1" value="Tampilkan snackbar User ditambahkan">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="280" y="1169" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-48" parent="KDllf0GMDuVZENMzyCbS-47" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="17" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="167" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-49" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-1" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-2" value="Klik edit pada list item">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="277" y="1301" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-50" parent="KDllf0GMDuVZENMzyCbS-49" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="18" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-181" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-51" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-2" style="curved=1;endArrow=block;rounded=0;" target="KDllf0GMDuVZENMzyCbS-2" value="showForm with existing data">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="493" y="1355" />
+              <mxPoint x="493" y="1385" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-52" parent="KDllf0GMDuVZENMzyCbS-51" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="19" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-57" y="-22" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-53" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-2" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-1" value="Tampilkan dialog">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="280" y="1439" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-54" parent="KDllf0GMDuVZENMzyCbS-53" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="20" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="167" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-55" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-1" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-2" value="Ubah role unit atau status">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="277" y="1493" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-56" parent="KDllf0GMDuVZENMzyCbS-55" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="21" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-181" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-57" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-1" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-2" value="Klik Update">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="277" y="1547" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-58" parent="KDllf0GMDuVZENMzyCbS-57" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="22" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-181" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-59" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-2" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-3" value="updateData users">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="554" y="1601" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-60" parent="KDllf0GMDuVZENMzyCbS-59" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="23" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-110.75" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-61" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-3" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-5" value="update users set">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="857" y="1655" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-62" parent="KDllf0GMDuVZENMzyCbS-61" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="24" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-207.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-63" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-5" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-6" value="UPDATE record">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1157" y="1709" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-64" parent="KDllf0GMDuVZENMzyCbS-63" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="25" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-107.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-65" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-6" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-5" value="Success">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1160" y="1763" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-66" parent="KDllf0GMDuVZENMzyCbS-65" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="26" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="93.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-67" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-5" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-3" value="Success">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="860" y="1817" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-68" parent="KDllf0GMDuVZENMzyCbS-67" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="27" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="193.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-69" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-3" style="curved=1;endArrow=block;rounded=0;" target="KDllf0GMDuVZENMzyCbS-3" value="refresh data">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="700" y="1871" />
+              <mxPoint x="700" y="1901" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-70" parent="KDllf0GMDuVZENMzyCbS-69" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="28" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-57" y="-22" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-71" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-3" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-2" value="Success">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="557" y="1955" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-72" parent="KDllf0GMDuVZENMzyCbS-71" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="29" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="96.75" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-73" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-2" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-1" value="Tampilkan snackbar User diupdate">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="280" y="2009" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-74" parent="KDllf0GMDuVZENMzyCbS-73" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="30" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="167" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-75" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-1" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-2" value="Klik delete pada list item">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="277" y="2141" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-76" parent="KDllf0GMDuVZENMzyCbS-75" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="31" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-181" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-77" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-2" style="curved=1;endArrow=block;rounded=0;" target="KDllf0GMDuVZENMzyCbS-2" value="showDialog konfirmasi">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="493" y="2195" />
+              <mxPoint x="493" y="2225" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-78" parent="KDllf0GMDuVZENMzyCbS-77" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="32" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-57" y="-22" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-79" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-2" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-1" value="Tampilkan konfirmasi hapus">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="280" y="2279" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-80" parent="KDllf0GMDuVZENMzyCbS-79" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="33" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="167" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-81" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-1" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-2" value="Klik Ya">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="277" y="2333" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-82" parent="KDllf0GMDuVZENMzyCbS-81" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="34" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-181" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-83" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-2" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-4" value="deleteUser">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="654" y="2387" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-84" parent="KDllf0GMDuVZENMzyCbS-83" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="35" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-210.75" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-85" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-4" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-6" value="DELETE from auth.users">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1057" y="2441" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-86" parent="KDllf0GMDuVZENMzyCbS-85" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="36" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-207.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-87" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-6" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-4" value="Success">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1060" y="2495" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-88" parent="KDllf0GMDuVZENMzyCbS-87" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="37" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="193.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-89" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-2" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-3" value="deleteData users">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="554" y="2549" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-90" parent="KDllf0GMDuVZENMzyCbS-89" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="38" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-110.75" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-91" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-3" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-5" value="delete from users">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="857" y="2603" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-92" parent="KDllf0GMDuVZENMzyCbS-91" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="39" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-207.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-93" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-5" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-6" value="DELETE record">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1157" y="2657" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-94" parent="KDllf0GMDuVZENMzyCbS-93" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="40" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-107.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-95" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-6" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-5" value="Success">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1160" y="2711" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-96" parent="KDllf0GMDuVZENMzyCbS-95" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="41" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="93.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-97" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-5" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-3" value="Success">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="860" y="2765" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-98" parent="KDllf0GMDuVZENMzyCbS-97" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="42" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="193.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-99" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-3" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-2" value="Success">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="557" y="2819" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-100" parent="KDllf0GMDuVZENMzyCbS-99" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="43" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="96.75" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-101" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-2" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-1" value="Tampilkan snackbar User dihapus">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="280" y="2873" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-102" parent="KDllf0GMDuVZENMzyCbS-101" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="44" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="167" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-103" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-1" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-2" value="Klik reset password">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="277" y="3005" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-104" parent="KDllf0GMDuVZENMzyCbS-103" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="45" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-181" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-105" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-2" style="curved=1;endArrow=block;rounded=0;" target="KDllf0GMDuVZENMzyCbS-2" value="showDialog konfirmasi">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="493" y="3059" />
+              <mxPoint x="493" y="3089" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-106" parent="KDllf0GMDuVZENMzyCbS-105" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="46" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-57" y="-22" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-107" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-2" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-1" value="Tampilkan konfirmasi reset">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="280" y="3143" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-108" parent="KDllf0GMDuVZENMzyCbS-107" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="47" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="167" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-109" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-1" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-2" value="Klik Ya">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="277" y="3197" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-110" parent="KDllf0GMDuVZENMzyCbS-109" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="48" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-181" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-111" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-2" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-4" value="resetPasswordForEmail">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="654" y="3251" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-112" parent="KDllf0GMDuVZENMzyCbS-111" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="49" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-210.75" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-113" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-4" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-6" value="Send reset email">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1057" y="3305" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-114" parent="KDllf0GMDuVZENMzyCbS-113" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="50" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-207.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-115" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-6" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-4" value="Success">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1060" y="3359" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-116" parent="KDllf0GMDuVZENMzyCbS-115" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="51" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="193.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-117" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-4" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-2" value="Success">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="657" y="3413" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-118" parent="KDllf0GMDuVZENMzyCbS-117" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="52" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="196.75" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-119" edge="1" parent="1" source="KDllf0GMDuVZENMzyCbS-2" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KDllf0GMDuVZENMzyCbS-1" value="Tampilkan snackbar Email reset terkirim">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="280" y="3467" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-120" parent="KDllf0GMDuVZENMzyCbS-119" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="53" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="167" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-121" parent="1" style="fillColor=#ffff88;strokeColor=#9E916F;fontColor=light-dark(#333333,#cccccc);" value="CRUD USER DAN ROLE" vertex="1">
+          <mxGeometry height="48" width="1204" x="70" y="95" as="geometry" />
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-122" parent="1" style="fillColor=#ffff88;strokeColor=#9E916F;fontColor=light-dark(#333333,#cccccc);" value="CREATE USER" vertex="1">
+          <mxGeometry height="48" width="1204" x="70" y="163" as="geometry" />
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-123" parent="1" style="fillColor=#ffff88;strokeColor=#9E916F;fontColor=light-dark(#333333,#cccccc);" value="UPDATE USER" vertex="1">
+          <mxGeometry height="48" width="1204" x="70" y="1219" as="geometry" />
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-124" parent="1" style="fillColor=#ffff88;strokeColor=#9E916F;fontColor=light-dark(#333333,#cccccc);" value="DELETE USER" vertex="1">
+          <mxGeometry height="48" width="1204" x="70" y="2059" as="geometry" />
+        </mxCell>
+        <mxCell id="KDllf0GMDuVZENMzyCbS-125" parent="1" style="fillColor=#ffff88;strokeColor=#9E916F;fontColor=light-dark(#333333,#cccccc);" value="RESET PASSWORD" vertex="1">
+          <mxGeometry height="48" width="1204" x="70" y="2923" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

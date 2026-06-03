@@ -1,0 +1,187 @@
+<mxfile host="Electron">
+  <diagram id="BeOfeQLj1Q0yw0qHcC6K" name="Page-1">
+    <mxGraphModel dx="1269" dy="692" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4800" pageHeight="3600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-1" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;fillColor=light-dark(#eeeeee,#1f2020);strokeColor=light-dark(#999999,#cccccc);fontColor=light-dark(#333333,#cccccc);" value="User" vertex="1">
+          <mxGeometry height="1000" width="150" x="20" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-2" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;fillColor=light-dark(#eeeeee,#1f2020);strokeColor=light-dark(#999999,#cccccc);fontColor=light-dark(#333333,#cccccc);" value="DashboardScreen" vertex="1">
+          <mxGeometry height="1000" width="150" x="290" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-3" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;fillColor=light-dark(#eeeeee,#1f2020);strokeColor=light-dark(#999999,#cccccc);fontColor=light-dark(#333333,#cccccc);" value="AuthProvider" vertex="1">
+          <mxGeometry height="1000" width="150" x="490" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-4" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;fillColor=light-dark(#eeeeee,#1f2020);strokeColor=light-dark(#999999,#cccccc);fontColor=light-dark(#333333,#cccccc);" value="SupabaseAPI" vertex="1">
+          <mxGeometry height="1000" width="150" x="690" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-5" parent="1" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;fillColor=light-dark(#eeeeee,#1f2020);strokeColor=light-dark(#999999,#cccccc);fontColor=light-dark(#333333,#cccccc);" value="SharedPrefs" vertex="1">
+          <mxGeometry height="1000" width="150" x="890" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-6" edge="1" parent="1" source="KrA_PGcLLiHryvpnPFDm-1" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KrA_PGcLLiHryvpnPFDm-2" value="Klik menu Logout">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="239" y="177" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-7" parent="KrA_PGcLLiHryvpnPFDm-6" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="1" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-142.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-8" edge="1" parent="1" source="KrA_PGcLLiHryvpnPFDm-2" style="curved=1;endArrow=block;rounded=0;" target="KrA_PGcLLiHryvpnPFDm-2" value="showDialog konfirmasi">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="416" y="231" />
+              <mxPoint x="416" y="261" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-9" parent="KrA_PGcLLiHryvpnPFDm-8" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="2" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-57" y="-22" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-10" edge="1" parent="1" source="KrA_PGcLLiHryvpnPFDm-2" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KrA_PGcLLiHryvpnPFDm-1" value="Tampilkan konfirmasi logout">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="242" y="315" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-11" parent="KrA_PGcLLiHryvpnPFDm-10" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="3" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="128.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-12" edge="1" parent="1" source="KrA_PGcLLiHryvpnPFDm-1" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KrA_PGcLLiHryvpnPFDm-2" value="Klik Ya">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="239" y="369" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-13" parent="KrA_PGcLLiHryvpnPFDm-12" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="4" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-142.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-14" edge="1" parent="1" source="KrA_PGcLLiHryvpnPFDm-2" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KrA_PGcLLiHryvpnPFDm-3" value="logout">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="474" y="423" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-15" parent="KrA_PGcLLiHryvpnPFDm-14" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="5" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-107.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-16" edge="1" parent="1" source="KrA_PGcLLiHryvpnPFDm-3" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KrA_PGcLLiHryvpnPFDm-4" value="signOut">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="674" y="477" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-17" parent="KrA_PGcLLiHryvpnPFDm-16" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="6" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-107.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-18" edge="1" parent="1" source="KrA_PGcLLiHryvpnPFDm-4" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KrA_PGcLLiHryvpnPFDm-3" value="Success">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="677" y="531" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-19" parent="KrA_PGcLLiHryvpnPFDm-18" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="7" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="93.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-20" edge="1" parent="1" source="KrA_PGcLLiHryvpnPFDm-3" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" target="KrA_PGcLLiHryvpnPFDm-5" value="clear all data">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="774" y="585" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-21" parent="KrA_PGcLLiHryvpnPFDm-20" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="8" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-207.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-22" edge="1" parent="1" source="KrA_PGcLLiHryvpnPFDm-5" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KrA_PGcLLiHryvpnPFDm-3" value="Cleared">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="777" y="639" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-23" parent="KrA_PGcLLiHryvpnPFDm-22" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="9" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="193.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-24" edge="1" parent="1" source="KrA_PGcLLiHryvpnPFDm-3" style="curved=1;endArrow=block;rounded=0;" target="KrA_PGcLLiHryvpnPFDm-3" value="set currentUser to null">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="616" y="693" />
+              <mxPoint x="616" y="723" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-25" parent="KrA_PGcLLiHryvpnPFDm-24" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="10" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-57" y="-22" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-26" edge="1" parent="1" source="KrA_PGcLLiHryvpnPFDm-3" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KrA_PGcLLiHryvpnPFDm-2" value="Logout complete">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="477" y="777" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-27" parent="KrA_PGcLLiHryvpnPFDm-26" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="11" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="93.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-28" edge="1" parent="1" source="KrA_PGcLLiHryvpnPFDm-2" style="curved=1;endArrow=block;rounded=0;" target="KrA_PGcLLiHryvpnPFDm-2" value="pushReplacement to LoginScreen">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="416" y="831" />
+              <mxPoint x="416" y="861" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-29" parent="KrA_PGcLLiHryvpnPFDm-28" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="12" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="-57" y="-22" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-30" edge="1" parent="1" source="KrA_PGcLLiHryvpnPFDm-2" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" target="KrA_PGcLLiHryvpnPFDm-1" value="Kembali ke halaman login">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="242" y="915" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-31" parent="KrA_PGcLLiHryvpnPFDm-30" style="ellipse;aspect=fixed;fillColor=#000000;align=center;fontColor=#FFFFFF;" value="13" vertex="1">
+          <mxGeometry height="14" relative="1" width="14" as="geometry">
+            <mxPoint x="128.5" y="-7" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="KrA_PGcLLiHryvpnPFDm-32" parent="1" style="fillColor=#ffff88;strokeColor=#9E916F;fontColor=light-dark(#333333,#cccccc);" value="LOGOUT FLOW" vertex="1">
+          <mxGeometry height="48" width="920" x="70" y="95" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

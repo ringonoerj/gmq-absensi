@@ -1,0 +1,22 @@
+# Ignore zip archives
+*.zip
+
+# Ignore credential and secret files
+*kredensial*.txt
+*credential*.txt
+secrets.txt
+gmq-absensi-kredensial.txt
+
+# Ignore log files
+*.log
+
+# Ignore local IDE/editor configurations
+.idea/
+.vscode/
+
+# Ignore OS files
+Thumbs.db
+.DS_Store
+
+# Ignore template directories
+template_app_bloc-main/
