@@ -6,6 +6,7 @@ import '../../services/supabase_service.dart';
 import '../../widgets/greeting_card.dart';
 import '../../widgets/dashboard_chart.dart';
 import '../../widgets/confetti_overlay.dart';
+import '../../widgets/dashboard_banner_card.dart';
 import '../shared/laporan_screen.dart';
 
 
@@ -148,7 +149,9 @@ class HomeSupervisorScreen extends StatelessWidget {
                 userName: auth.currentUser?.name ?? 'Supervisor',
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
+            const DashboardBannerCard(),
+            const SizedBox(height: 16),
             const Text(
               'Statistik Sistem',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

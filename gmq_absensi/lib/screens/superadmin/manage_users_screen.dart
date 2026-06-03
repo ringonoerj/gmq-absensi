@@ -224,6 +224,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                                       SupabaseService.supabaseAnonKey,
                                       authOptions: const AuthClientOptions(
                                         authFlowType: AuthFlowType.implicit,
+                                        localStorage: const EmptyLocalStorage(),
                                       ),
                                     );
                                     final response = await tempClient.auth.signUp(

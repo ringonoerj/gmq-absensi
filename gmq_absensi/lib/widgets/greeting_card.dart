@@ -17,12 +17,13 @@ class _GreetingCardState extends State<GreetingCard> with SingleTickerProviderSt
   Timer? _timer;
 
   final List<String> _quotes = [
-    '“Pendidikan adalah senjata paling mematikan di dunia, karena dengan itu Anda dapat mengubah dunia.” — Nelson Mandela',
     '“Barangsiapa yang menempuh suatu jalan untuk mencari ilmu, maka Allah akan memudahkan baginya jalan menuju surga.” — HR. Muslim',
     '“Ilmu itu bukan yang dihafal, tetapi yang memberi manfaat.” — Imam Syafi\'i',
-    '“Belajar tanpa berpikir itu tidak berguna, berpikir tanpa belajar itu sangat berbahaya.” — Konfusius',
-    '“Masa depan adalah milik mereka yang mempersiapkan diri hari ini.” — Malcolm X',
-    '“Pendidikan bukan cuma pergi ke sekolah dan mendapatkan gelar. Tapi, juga soal memperluas pengetahuan dan menyerap ilmu kehidupan.” — Shakuntala Devi',
+    '“Menuntut ilmu adalah kewajiban bagi setiap muslim.” — HR. Ibnu Majah',
+    '“Jika seseorang bepergian dengan tujuan mencari ilmu, maka ia berada di jalan Allah sampai ia kembali.” — HR. Tirmidzi',
+    '“Sebaik-baik kalian adalah orang yang mempelajari Al-Qur\'an dan mengajarkannya.” — HR. Bukhari',
+    '“Belajarlah kamu sekalian, dan mengajarlah kamu sekalian, dan hormatilah guru-gurumu.” — HR. Ath-Thabrani',
+    '“Kelebihan seorang alim dibanding seorang abid (ahli ibadah) seperti kelebihan bulan purnama atas seluruh bintang-bintang.” — HR. Abu Dawud',
   ];
 
   @override
@@ -62,15 +63,17 @@ class _GreetingCardState extends State<GreetingCard> with SingleTickerProviderSt
 
   String _getGreeting() {
     final hour = DateTime.now().hour;
+    String greeting;
     if (hour >= 4 && hour < 10) {
-      return 'Selamat Pagi 🌅';
+      greeting = 'Selamat Pagi 🌅';
     } else if (hour >= 10 && hour < 15) {
-      return 'Selamat Siang ☀️';
+      greeting = 'Selamat Siang ☀️';
     } else if (hour >= 15 && hour < 18) {
-      return 'Selamat Sore 🌇';
+      greeting = 'Selamat Sore 🌇';
     } else {
-      return 'Selamat Malam 🌌';
+      greeting = 'Selamat Malam 🌌';
     }
+    return "Assalamu'alaikum, $greeting";
   }
 
   @override

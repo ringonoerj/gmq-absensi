@@ -7,12 +7,14 @@ import '../../services/supabase_service.dart';
 import '../../widgets/greeting_card.dart';
 import '../../widgets/dashboard_chart.dart';
 import '../../widgets/confetti_overlay.dart';
+import '../../widgets/dashboard_banner_card.dart';
 import 'manage_unit_screen.dart';
 import 'manage_kelas_screen.dart';
 import 'manage_guru_screen.dart';
 import 'manage_siswa_screen.dart';
 import 'manage_users_screen.dart';
 import 'backup_restore_screen.dart';
+import 'manage_settings_screen.dart';
 import '../shared/laporan_screen.dart';
 
 
@@ -35,15 +37,16 @@ class _DashboardSuperadminState extends State<DashboardSuperadmin> {
     const ManageUsersScreen(),
     const BackupRestoreScreen(),
     const LaporanScreen(),
+    const ManageSettingsScreen(),
   ];
   
   final List<String> _titles = [
-    'Dashboard', 'Unit', 'Kelas', 'Guru', 'Siswa', 'Users', 'Backup', 'Laporan'
+    'Dashboard', 'Unit', 'Kelas', 'Guru', 'Siswa', 'Users', 'Backup', 'Laporan', 'Pengaturan Banner'
   ];
   
   final List<IconData> _icons = [
     Icons.dashboard, Icons.business, Icons.class_, Icons.person, Icons.people,
-    Icons.admin_panel_settings, Icons.backup, Icons.assessment
+    Icons.admin_panel_settings, Icons.backup, Icons.assessment, Icons.campaign
   ];
   
   @override
@@ -196,7 +199,9 @@ class HomeScreenSuperadmin extends StatelessWidget {
                 userName: auth.currentUser?.name ?? 'Superadmin',
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
+            const DashboardBannerCard(),
+            const SizedBox(height: 16),
             const Text(
               'Statistik Cepat',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
