@@ -9,6 +9,7 @@ import 'providers/theme_provider.dart';
 import 'utils/theme.dart';
 import 'widgets/confetti_overlay.dart';
 import 'screens/auth/login_screen.dart';
+import 'screens/shared/splash_screen.dart';
 import 'screens/operator/dashboard_operator.dart';
 import 'screens/supervisor/dashboard_supervisor.dart';
 import 'screens/superadmin/dashboard_superadmin.dart';
@@ -48,9 +49,7 @@ class MyApp extends StatelessWidget {
               child: Consumer<AuthProvider>(
                 builder: (context, auth, _) {
                   if (auth.isLoading) {
-                    return const Scaffold(
-                      body: Center(child: CircularProgressIndicator()),
-                    );
+                    return const SplashScreen();
                   }
                   if (auth.isAuthenticated) {
                     if (auth.isSuperadmin) {

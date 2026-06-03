@@ -106,12 +106,26 @@ class CacheService {
 
   // Network Connectivity helper
   static Future<bool> hasConnection() async {
-    if (kIsWeb) return true;
     try {
       final connectivityResult = await Connectivity().checkConnectivity();
-      if (connectivityResult == ConnectivityResult.none) {
-        return false;
+      
+      // Support both list (connectivity_plus v5+) and single enum (connectivity_plus v4-)
+      dynamic res = connectivityResult;
+      if (res is List) {
+        if (res.isEmpty || res.contains(ConnectivityResult.none)) {
+          return false;
+        }
+      } else {
+        if (res == ConnectivityResult.none) {
+          return false;
+        }
       }
+
+      if (kIsWeb) {
+        // InternetAddress.lookup is not supported on web.
+        return true;
+      }
+      
       final result = await InternetAddress.lookup('google.com')
           .timeout(const Duration(seconds: 3));
       return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
