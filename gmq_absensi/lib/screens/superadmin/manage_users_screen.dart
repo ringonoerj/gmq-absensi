@@ -447,10 +447,9 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
 
   Future<void> _deleteUser(String userId) async {
     try {
-      await SupabaseService.client
-          .from('users')
-          .delete()
-          .eq('id', userId);
+      await SupabaseService.client.rpc('admin_delete_user', params: {
+        'target_user_id': userId,
+      });
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
