@@ -222,7 +222,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                                     final tempClient = SupabaseClient(
                                       SupabaseService.supabaseUrl,
                                       SupabaseService.supabaseAnonKey,
-                                      authOptions: const AuthClientOptions(
+                                      authOptions: const FlutterAuthClientOptions(
                                         authFlowType: AuthFlowType.implicit,
                                         localStorage: const EmptyLocalStorage(),
                                       ),
