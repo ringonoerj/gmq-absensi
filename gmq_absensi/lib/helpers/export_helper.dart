@@ -154,4 +154,93 @@ class ExportHelper {
       }
     }
   }
+
+  Future<void> exportLaporanInsentif(
+    BuildContext context, {
+    required DateTime month,
+    required List<Map<String, dynamic>> processedData,
+  }) async {
+    // Show a loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      var excel = Excel.createExcel();
+      Sheet sheetObject = excel['Laporan Insentif Guru'];
+      
+      // Title
+      sheetObject.appendRow([
+        'LAPORAN INSENTIF GURU - BULAN ${month.month}/${month.year}'
+      ]);
+      sheetObject.appendRow([]); // empty row
+      
+      // Header
+      sheetObject.appendRow([
+        'Unit Pendidikan',
+        'Nama Guru',
+        'Jumlah Kehadiran',
+        'Insentif per Hari (Rp)',
+        'Total Insentif (Rp)'
+      ]);
+      
+      for (var unitData in processedData) {
+        final String unitName = unitData['unit_name'];
+        final teachers = unitData['teachers'] as List;
+        
+        for (var t in teachers) {
+          sheetObject.appendRow([
+            unitName,
+            t['guru_name'],
+            t['hadir_count'],
+            t['rate'],
+            t['total_incentive']
+          ]);
+        }
+      }
+      
+      // Auto-fit columns
+      for (var columnIndex = 0; columnIndex < sheetObject.maxCols; columnIndex++) {
+        int maxLength = 0;
+        for (var rowIndex = 0; rowIndex < sheetObject.maxRows; rowIndex++) {
+          var cell = sheetObject.cell(CellIndex.indexByColumnRow(columnIndex: columnIndex, rowIndex: rowIndex));
+          String val = cell.value?.toString() ?? "";
+          if (val.length > maxLength) {
+            maxLength = val.length;
+          }
+        }
+        sheetObject.setColWidth(columnIndex, (maxLength + 3).toDouble());
+      }
+      
+      final fileName = 'laporan_insentif_guru_${month.year}_${month.month}.xlsx';
+      final bytes = excel.encode();
+      if (bytes != null) {
+        await saveBytesFile(fileName, bytes);
+      } else {
+        throw Exception('Gagal mengencode data Excel');
+      }
+      
+      if (context.mounted) {
+        Navigator.pop(context); // Close loading indicator
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Laporan insentif berhasil diexport: $fileName'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.pop(context); // Close loading indicator
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal export insentif: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 }

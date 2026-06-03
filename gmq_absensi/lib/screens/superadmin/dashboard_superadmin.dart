@@ -16,6 +16,10 @@ import 'manage_users_screen.dart';
 import 'backup_restore_screen.dart';
 import 'manage_settings_screen.dart';
 import '../shared/laporan_screen.dart';
+import '../shared/laporan_insentif_screen.dart';
+import 'pengaturan_akun_screen.dart';
+import 'pengaturan_insentif_screen.dart';
+import 'bulk_upload_screen.dart';
 
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -96,19 +100,35 @@ class _DashboardSuperadminState extends State<DashboardSuperadmin> {
   }
   
   final List<Widget> _screens = [
-    const HomeScreenSuperadmin(),
-    const ManageUnitScreen(),
-    const ManageKelasScreen(),
-    const ManageGuruScreen(),
-    const ManageSiswaScreen(),
-    const ManageUsersScreen(),
-    const BackupRestoreScreen(),
-    const LaporanScreen(),
-    const ManageSettingsScreen(),
+    const HomeScreenSuperadmin(), // 0
+    const ManageUnitScreen(), // 1
+    const ManageKelasScreen(), // 2
+    const ManageGuruScreen(), // 3
+    const ManageSiswaScreen(), // 4
+    const ManageUsersScreen(), // 5
+    const LaporanScreen(), // 6
+    const LaporanInsentifGuruScreen(), // 7
+    const PengaturanAkunScreen(), // 8
+    const ManageSettingsScreen(), // 9
+    const PengaturanInsentifScreen(), // 10
+    const BulkUploadScreen(), // 11
+    const BackupRestoreScreen(), // 12
   ];
   
   final List<String> _titles = [
-    'Dashboard', 'Unit', 'Kelas', 'Guru', 'Siswa', 'Users', 'Backup', 'Laporan', 'Pengaturan Banner'
+    'Dashboard',
+    'Unit Pendidikan',
+    'Kelas',
+    'Guru',
+    'Siswa',
+    'Users',
+    'Laporan Absensi',
+    'Laporan Insentif Guru',
+    'Pengaturan Akun',
+    'Pengaturan Banner',
+    'Pengaturan Insentif Guru',
+    'Bulk Upload Data',
+    'Backup & Restore Data',
   ];
   
   final List<IconData> _icons = [
@@ -227,17 +247,148 @@ class _DashboardSuperadminState extends State<DashboardSuperadmin> {
                 ],
               ),
             ),
-            ...List.generate(_titles.length, (index) {
-              return ListTile(
-                leading: Icon(_icons[index]),
-                title: Text(_titles[index]),
-                selected: _selectedIndex == index,
-                onTap: () {
-                  setState(() => _selectedIndex = index);
-                  Navigator.pop(context);
-                },
-              );
-            }),
+            ListTile(
+              leading: const Icon(Icons.dashboard),
+              title: const Text('Dashboard'),
+              selected: _selectedIndex == 0,
+              onTap: () {
+                setState(() => _selectedIndex = 0);
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.business),
+              title: const Text('Unit Pendidikan'),
+              selected: _selectedIndex == 1,
+              onTap: () {
+                setState(() => _selectedIndex = 1);
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.class_),
+              title: const Text('Kelas'),
+              selected: _selectedIndex == 2,
+              onTap: () {
+                setState(() => _selectedIndex = 2);
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Guru'),
+              selected: _selectedIndex == 3,
+              onTap: () {
+                setState(() => _selectedIndex = 3);
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.people),
+              title: const Text('Siswa'),
+              selected: _selectedIndex == 4,
+              onTap: () {
+                setState(() => _selectedIndex = 4);
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.admin_panel_settings),
+              title: const Text('Users'),
+              selected: _selectedIndex == 5,
+              onTap: () {
+                setState(() => _selectedIndex = 5);
+                Navigator.pop(context);
+              },
+            ),
+            
+            // Laporan Parent
+            ExpansionTile(
+              leading: const Icon(Icons.assessment),
+              title: const Text('Laporan'),
+              initiallyExpanded: _selectedIndex == 6 || _selectedIndex == 7,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.calendar_month),
+                  title: const Text('Laporan Absensi'),
+                  selected: _selectedIndex == 6,
+                  contentPadding: const EdgeInsets.only(left: 32),
+                  onTap: () {
+                    setState(() => _selectedIndex = 6);
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.payments),
+                  title: const Text('Laporan Insentif Guru'),
+                  selected: _selectedIndex == 7,
+                  contentPadding: const EdgeInsets.only(left: 32),
+                  onTap: () {
+                    setState(() => _selectedIndex = 7);
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+            
+            // Pengaturan Parent
+            ExpansionTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Pengaturan'),
+              initiallyExpanded: _selectedIndex >= 8 && _selectedIndex <= 12,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.manage_accounts),
+                  title: const Text('Pengaturan Akun'),
+                  selected: _selectedIndex == 8,
+                  contentPadding: const EdgeInsets.only(left: 32),
+                  onTap: () {
+                    setState(() => _selectedIndex = 8);
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.campaign),
+                  title: const Text('Pengaturan Banner'),
+                  selected: _selectedIndex == 9,
+                  contentPadding: const EdgeInsets.only(left: 32),
+                  onTap: () {
+                    setState(() => _selectedIndex = 9);
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.payments),
+                  title: const Text('Nominal Insentif'),
+                  selected: _selectedIndex == 10,
+                  contentPadding: const EdgeInsets.only(left: 32),
+                  onTap: () {
+                    setState(() => _selectedIndex = 10);
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.cloud_upload),
+                  title: const Text('Bulk Upload Data'),
+                  selected: _selectedIndex == 11,
+                  contentPadding: const EdgeInsets.only(left: 32),
+                  onTap: () {
+                    setState(() => _selectedIndex = 11);
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.backup),
+                  title: const Text('Backup & Restore'),
+                  selected: _selectedIndex == 12,
+                  contentPadding: const EdgeInsets.only(left: 32),
+                  onTap: () {
+                    setState(() => _selectedIndex = 12);
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
           ],
         ),
       ),
