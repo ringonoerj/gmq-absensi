@@ -20,3 +20,17 @@ Thumbs.db
 
 # Ignore template directories
 template_app_bloc-main/
+
+# Ignore node modules and npm files
+node_modules/
+package-lock.json
+package.json
+
+# Ignore scratch files and migration helper script
+scratch_*.js
+run_migration.js
+
+# Ignore firebase temporary files and logs
+.firebase/
+firebase-debug.log
+

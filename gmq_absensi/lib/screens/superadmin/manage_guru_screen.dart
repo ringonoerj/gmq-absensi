@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../providers/master_provider.dart';
 import '../../services/supabase_service.dart';
 import '../../models/unit_model.dart';
+import '../../models/kelas_model.dart';
 
 class ManageGuruScreen extends StatefulWidget {
   const ManageGuruScreen({super.key});
@@ -17,10 +18,12 @@ class _ManageGuruScreenState extends State<ManageGuruScreen> {
   final _nipController = TextEditingController();
   final _emailController = TextEditingController();
   final _noTelpController = TextEditingController();
-  int? _selectedUnitId;
+  List<int> _selectedUnitIds = [];
+  List<int> _selectedKelasIds = [];
   int? _selectedKategoriId;
   int? _editingId;
   List<UnitModel> _unitList = [];
+  List<KelasModel> _allKelasList = [];
   List<Map<String, dynamic>> _kategoriList = [];
   
   @override
@@ -35,6 +38,7 @@ class _ManageGuruScreenState extends State<ManageGuruScreen> {
           .fetchData('guru', orderBy: 'name'),
       _loadUnits(),
       _loadKategori(),
+      _loadAllKelas(),
     ]);
   }
   
@@ -47,6 +51,18 @@ class _ManageGuruScreenState extends State<ManageGuruScreen> {
       setState(() {});
     } catch (e) {
       print('Error loading units: $e');
+    }
+  }
+  
+  Future<void> _loadAllKelas() async {
+    try {
+      final response = await SupabaseService.client
+          .from('kelas')
+          .select();
+      _allKelasList = (response as List).map((j) => KelasModel.fromJson(j as Map<String, dynamic>)).toList();
+      setState(() {});
+    } catch (e) {
+      print('Error loading all classes: $e');
     }
   }
   
@@ -63,6 +79,128 @@ class _ManageGuruScreenState extends State<ManageGuruScreen> {
     }
   }
   
+  void _showUnitSelector(StateSetter setModalState) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        List<int> tempSelected = List.from(_selectedUnitIds);
+        return AlertDialog(
+          title: const Text('Pilih Unit Pendidikan'),
+          content: StatefulBuilder(
+            builder: (context, setStateDialog) {
+              return SingleChildScrollView(
+                child: ListBody(
+                  children: _unitList.map<Widget>((unit) {
+                    final isChecked = tempSelected.contains(unit.id);
+                    return CheckboxListTile(
+                      title: Text(unit.name),
+                      value: isChecked,
+                      onChanged: (val) {
+                        setStateDialog(() {
+                          if (val == true) {
+                            tempSelected.add(unit.id);
+                          } else {
+                            tempSelected.remove(unit.id);
+                          }
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Batal'),
+            ),
+            TextButton(
+              onPressed: () {
+                setModalState(() {
+                  _selectedUnitIds = tempSelected;
+                  // Remove classes that do not belong to the selected units
+                  _selectedKelasIds.removeWhere((classId) {
+                    final cls = _allKelasList.firstWhere(
+                      (c) => c.id == classId,
+                      orElse: () => KelasModel(id: 0, name: '', unitId: 0, createdAt: DateTime.now()),
+                    );
+                    return !_selectedUnitIds.contains(cls.unitId);
+                  });
+                });
+                setState(() {});
+                Navigator.pop(context);
+              },
+              child: const Text('Pilih'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showKelasSelector(StateSetter setModalState) {
+    final availableClasses = _allKelasList.where((c) => _selectedUnitIds.contains(c.unitId)).toList();
+    
+    showDialog(
+      context: context,
+      builder: (context) {
+        List<int> tempSelected = List.from(_selectedKelasIds);
+        return AlertDialog(
+          title: const Text('Pilih Kelas'),
+          content: StatefulBuilder(
+            builder: (context, setStateDialog) {
+              if (availableClasses.isEmpty) {
+                return const Center(child: Text('Pilih unit pendidikan terlebih dahulu.'));
+              }
+              return SingleChildScrollView(
+                child: ListBody(
+                  children: availableClasses.map<Widget>((kelas) {
+                    final isChecked = tempSelected.contains(kelas.id);
+                    final unitName = _unitList.firstWhere(
+                      (u) => u.id == kelas.unitId,
+                      orElse: () => UnitModel(id: 0, name: '-', createdAt: DateTime.now()),
+                    ).name;
+                    return CheckboxListTile(
+                      title: Text(kelas.name),
+                      subtitle: Text(unitName, style: const TextStyle(fontSize: 11)),
+                      value: isChecked,
+                      onChanged: (val) {
+                        setStateDialog(() {
+                          if (val == true) {
+                            tempSelected.add(kelas.id);
+                          } else {
+                            tempSelected.remove(kelas.id);
+                          }
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Batal'),
+            ),
+            TextButton(
+              onPressed: () {
+                setModalState(() {
+                  _selectedKelasIds = tempSelected;
+                });
+                setState(() {});
+                Navigator.pop(context);
+              },
+              child: const Text('Pilih'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _showForm({Map<String, dynamic>? guru}) {
     if (guru != null) {
       _editingId = guru['id'];
@@ -70,7 +208,19 @@ class _ManageGuruScreenState extends State<ManageGuruScreen> {
       _nipController.text = guru['nip'] ?? '';
       _emailController.text = guru['email'] ?? '';
       _noTelpController.text = guru['no_telp'] ?? '';
-      _selectedUnitId = guru['unit_id'];
+      
+      _selectedUnitIds = [];
+      if (guru['unit_ids'] != null) {
+        _selectedUnitIds = List<int>.from(guru['unit_ids']);
+      } else if (guru['unit_id'] != null) {
+        _selectedUnitIds = [guru['unit_id'] as int];
+      }
+      
+      _selectedKelasIds = [];
+      if (guru['kelas_ids'] != null) {
+        _selectedKelasIds = List<int>.from(guru['kelas_ids']);
+      }
+      
       _selectedKategoriId = guru['kategori_id'];
     } else {
       _editingId = null;
@@ -78,7 +228,8 @@ class _ManageGuruScreenState extends State<ManageGuruScreen> {
       _nipController.clear();
       _emailController.clear();
       _noTelpController.clear();
-      _selectedUnitId = null;
+      _selectedUnitIds = [];
+      _selectedKelasIds = [];
       _selectedKategoriId = _kategoriList.isNotEmpty ? _kategoriList[0]['id'] : null;
     }
     
@@ -108,29 +259,128 @@ class _ManageGuruScreenState extends State<ManageGuruScreen> {
                       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16),
-                    DropdownButtonFormField<int>(
-                      decoration: const InputDecoration(
-                        labelText: 'Unit Pendidikan *',
-                        border: OutlineInputBorder(),
+                    
+                    // Unit selector container
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade400),
+                        borderRadius: BorderRadius.circular(4),
                       ),
-                      value: _selectedUnitId,
-                      items: _unitList.map((unit) {
-                        return DropdownMenuItem(
-                          value: unit.id,
-                          child: Text(unit.name),
-                        );
-                      }).toList(),
-                      onChanged: (v) {
-                        setModalState(() {
-                          _selectedUnitId = v;
-                        });
-                        setState(() {
-                          _selectedUnitId = v;
-                        });
-                      },
-                      validator: (v) => v == null ? 'Pilih unit pendidikan' : null,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Unit Pendidikan *',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                              ),
+                              TextButton(
+                                onPressed: () => _showUnitSelector(setModalState),
+                                child: const Text('Pilih Unit'),
+                              ),
+                            ],
+                          ),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 4,
+                            children: _selectedUnitIds.map<Widget>((id) {
+                              final name = _unitList.firstWhere(
+                                (u) => u.id == id,
+                                orElse: () => UnitModel(id: 0, name: '-', createdAt: DateTime.now()),
+                              ).name;
+                              return Chip(
+                                label: Text(name, style: const TextStyle(fontSize: 11)),
+                                onDeleted: () {
+                                  setModalState(() {
+                                    _selectedUnitIds.remove(id);
+                                    _selectedKelasIds.removeWhere((classId) {
+                                      final cls = _allKelasList.firstWhere(
+                                        (c) => c.id == classId,
+                                        orElse: () => KelasModel(id: 0, name: '', unitId: 0, createdAt: DateTime.now()),
+                                      );
+                                      return cls.unitId == id;
+                                    });
+                                  });
+                                  setState(() {});
+                                },
+                              );
+                            }).toList(),
+                          ),
+                          if (_selectedUnitIds.isEmpty)
+                            const Padding(
+                              padding: EdgeInsets.only(top: 4),
+                              child: Text(
+                                'Unit pendidikan wajib dipilih',
+                                style: TextStyle(color: Colors.red, fontSize: 11),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 12),
+
+                    // Kelas selector container
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade400),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Kelas (Opsional)',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                              ),
+                              TextButton(
+                                onPressed: _selectedUnitIds.isEmpty
+                                    ? null
+                                    : () => _showKelasSelector(setModalState),
+                                child: const Text('Pilih Kelas'),
+                              ),
+                            ],
+                          ),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 4,
+                            children: _selectedKelasIds.map<Widget>((id) {
+                              final name = _allKelasList.firstWhere(
+                                (c) => c.id == id,
+                                orElse: () => KelasModel(id: 0, name: '-', unitId: 0, createdAt: DateTime.now()),
+                              ).name;
+                              return Chip(
+                                label: Text(name, style: const TextStyle(fontSize: 11)),
+                                onDeleted: () {
+                                  setModalState(() {
+                                    _selectedKelasIds.remove(id);
+                                  });
+                                  setState(() {});
+                                },
+                              );
+                            }).toList(),
+                          ),
+                          if (_selectedKelasIds.isEmpty)
+                            const Padding(
+                              padding: EdgeInsets.only(top: 4),
+                              child: Text(
+                                'Belum ada kelas terpilih',
+                                style: TextStyle(color: Colors.grey, fontSize: 11),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    
                     TextFormField(
                       controller: _nameController,
                       decoration: const InputDecoration(
@@ -171,7 +421,7 @@ class _ManageGuruScreenState extends State<ManageGuruScreen> {
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () async {
-                              if (_formKey.currentState!.validate() && _selectedUnitId != null) {
+                              if (_formKey.currentState!.validate() && _selectedUnitIds.isNotEmpty) {
                                 final provider = Provider.of<MasterProvider>(
                                   context,
                                   listen: false,
@@ -181,7 +431,9 @@ class _ManageGuruScreenState extends State<ManageGuruScreen> {
                                   'nip': _nipController.text.isEmpty ? null : _nipController.text,
                                   'email': _emailController.text.isEmpty ? null : _emailController.text,
                                   'no_telp': _noTelpController.text.isEmpty ? null : _noTelpController.text,
-                                  'unit_id': _selectedUnitId,
+                                  'unit_ids': _selectedUnitIds,
+                                  'kelas_ids': _selectedKelasIds,
+                                  'unit_id': _selectedUnitIds.first, // fallback for legacy column constraint
                                   'kategori_id': _selectedKategoriId,
                                 };
                                 
@@ -261,14 +513,37 @@ class _ManageGuruScreenState extends State<ManageGuruScreen> {
                     itemCount: provider.data.length,
                     itemBuilder: (context, index) {
                       final guru = provider.data[index];
-                      final unit = _unitList.firstWhere(
-                        (u) => u.id == guru['unit_id'],
-                        orElse: () => UnitModel(
-                          id: 0,
-                          name: '-',
-                          createdAt: DateTime.now(),
-                        ),
-                      );
+                      
+                      // Process unit names
+                      final List<int> uIds = [];
+                      if (guru['unit_ids'] != null) {
+                        uIds.addAll(List<int>.from(guru['unit_ids']));
+                      } else if (guru['unit_id'] != null) {
+                        uIds.add(guru['unit_id'] as int);
+                      }
+                      
+                      final unitNames = uIds.map((uid) {
+                        return _unitList.firstWhere(
+                          (u) => u.id == uid,
+                          orElse: () => UnitModel(id: 0, name: '-', createdAt: DateTime.now()),
+                        ).name;
+                      }).join(', ');
+
+                      // Process kelas names
+                      final List<int> kIds = [];
+                      if (guru['kelas_ids'] != null) {
+                        kIds.addAll(List<int>.from(guru['kelas_ids']));
+                      }
+                      
+                      final kelasNames = kIds.isNotEmpty
+                          ? kIds.map((kid) {
+                              return _allKelasList.firstWhere(
+                                (c) => c.id == kid,
+                                orElse: () => KelasModel(id: 0, name: '-', unitId: 0, createdAt: DateTime.now()),
+                              ).name;
+                            }).join(', ')
+                          : '-';
+                      
                       return Card(
                         margin: const EdgeInsets.symmetric(
                           horizontal: 12,
@@ -289,7 +564,8 @@ class _ManageGuruScreenState extends State<ManageGuruScreen> {
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Unit: ${unit.name}'),
+                              Text('Unit: $unitNames'),
+                              Text('Kelas: $kelasNames'),
                               if (guru['nip'] != null) Text('NIP: ${guru['nip']}'),
                               if (guru['email'] != null) Text('Email: ${guru['email']}'),
                             ],

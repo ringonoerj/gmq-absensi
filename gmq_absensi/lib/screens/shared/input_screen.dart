@@ -149,7 +149,7 @@ class _InputScreenState extends State<InputScreen> {
       final response = await SupabaseService.client
           .from('guru')
           .select()
-          .eq('unit_id', unitId);
+          .contains('unit_ids', [unitId]);
       setState(() {
         _guruList = List<Map<String, dynamic>>.from(response as List);
       });

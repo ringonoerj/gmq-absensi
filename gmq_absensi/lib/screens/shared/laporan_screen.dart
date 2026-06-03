@@ -95,7 +95,7 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
       final response = await SupabaseService.client
           .from('guru')
           .select()
-          .eq('unit_id', unitId);
+          .contains('unit_ids', [unitId]);
       setState(() {
         _guruList = List<Map<String, dynamic>>.from(response as List);
       });
@@ -198,7 +198,7 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
       if (_summaryType == 'guru') {
         var query = SupabaseService.client.from('guru').select();
         if (_selectedUnitId != null) {
-          query = query.eq('unit_id', _selectedUnitId!);
+          query = query.contains('unit_ids', [_selectedUnitId!]);
         }
         final guruList = await query;
         
