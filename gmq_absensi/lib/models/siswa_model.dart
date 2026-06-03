@@ -4,6 +4,7 @@ class SiswaModel {
   final String name;
   final String? email;
   final String? noTelp;
+  final String? namaWali;
   final int unitId;
   final int kelasId;
   final int kategoriId;
@@ -15,6 +16,7 @@ class SiswaModel {
     required this.name,
     this.email,
     this.noTelp,
+    this.namaWali,
     required this.unitId,
     required this.kelasId,
     required this.kategoriId,
@@ -28,6 +30,7 @@ class SiswaModel {
       name: json['name'] ?? '',
       email: json['email'],
       noTelp: json['no_telp'],
+      namaWali: json['nama_wali'],
       unitId: json['unit_id'] ?? 0,
       kelasId: json['kelas_id'] ?? 0,
       kategoriId: json['kategori_id'] ?? 0,
@@ -43,6 +46,7 @@ class SiswaModel {
       'name': name,
       'email': email,
       'no_telp': noTelp,
+      'nama_wali': namaWali,
       'unit_id': unitId,
       'kelas_id': kelasId,
       'kategori_id': kategoriId,

@@ -17,9 +17,10 @@ samples, guidance on mobile development, and a full API reference.
 
 ## Development & Deployment Rules
 
-1. **Local Verification First**: Always update the local codebase, compile, and run thorough testing locally before committing and pushing changes.
-2. **Manual Remote Pushes Only**:
-   - **DO NOT** perform automatic `git push` command executions.
-   - Pushes to the remote GitHub repository must be executed **manually** by the user after local verification.
-   - Pushing to the main branch on GitHub will automatically trigger the Firebase deployment pipeline.
+1. **Local Verification & Testing**: Always update the local codebase, compile, and test features thoroughly on your local machine before pushing.
+2. **No Direct Local Firebase Deployment**: Avoid running Firebase deploy command (`npx firebase deploy`) from your local terminal to prevent unverified hot-fixes.
+3. **Deployment via GitHub push**:
+   - Manually push verified local code changes to the remote GitHub repository on the `main` branch.
+   - Pushing to the `main` branch on GitHub will automatically trigger the GitHub Actions workflow to build and deploy the web application to Firebase Hosting.
+
 

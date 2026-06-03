@@ -18,6 +18,7 @@ class _ManageSiswaScreenState extends State<ManageSiswaScreen> {
   final _nisController = TextEditingController();
   final _emailController = TextEditingController();
   final _noTelpController = TextEditingController();
+  final _namaWaliController = TextEditingController();
   int? _selectedUnitId;
   int? _selectedKelasId;
   int? _selectedKategoriId;
@@ -103,6 +104,7 @@ class _ManageSiswaScreenState extends State<ManageSiswaScreen> {
       _nisController.text = siswa['nis'] ?? '';
       _emailController.text = siswa['email'] ?? '';
       _noTelpController.text = siswa['no_telp'] ?? '';
+      _namaWaliController.text = siswa['nama_wali'] ?? '';
       _selectedUnitId = siswa['unit_id'];
       _selectedKelasId = siswa['kelas_id'];
       _selectedKategoriId = siswa['kategori_id'];
@@ -115,6 +117,7 @@ class _ManageSiswaScreenState extends State<ManageSiswaScreen> {
       _nisController.clear();
       _emailController.clear();
       _noTelpController.clear();
+      _namaWaliController.clear();
       _selectedUnitId = null;
       _selectedKelasId = null;
       _kelasListForModal = [];
@@ -212,6 +215,14 @@ class _ManageSiswaScreenState extends State<ManageSiswaScreen> {
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
+                      controller: _namaWaliController,
+                      decoration: const InputDecoration(
+                        labelText: 'Nama Wali Siswa/Santri',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
                       controller: _emailController,
                       decoration: const InputDecoration(
                         labelText: 'Email',
@@ -244,6 +255,7 @@ class _ManageSiswaScreenState extends State<ManageSiswaScreen> {
                                 final data = {
                                   'name': _nameController.text.trim(),
                                   'nis': _nisController.text.isEmpty ? null : _nisController.text,
+                                  'nama_wali': _namaWaliController.text.trim().isEmpty ? null : _namaWaliController.text.trim(),
                                   'email': _emailController.text.isEmpty ? null : _emailController.text,
                                   'no_telp': _noTelpController.text.isEmpty ? null : _noTelpController.text,
                                   'unit_id': _selectedUnitId,
@@ -365,6 +377,8 @@ class _ManageSiswaScreenState extends State<ManageSiswaScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text('Unit: ${unit.name} | Kelas: ${kelas.name}'),
+                              if (siswa['nama_wali'] != null && (siswa['nama_wali'] as String).isNotEmpty)
+                                Text('Wali: ${siswa['nama_wali']}'),
                               if (siswa['nis'] != null) Text('NIS: ${siswa['nis']}'),
                             ],
                           ),

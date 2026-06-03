@@ -8,6 +8,8 @@ import '../../widgets/dashboard_chart.dart';
 import '../../widgets/confetti_overlay.dart';
 import '../../widgets/dashboard_banner_card.dart';
 import '../shared/laporan_screen.dart';
+import '../shared/laporan_insentif_screen.dart';
+import '../superadmin/pengaturan_akun_screen.dart';
 
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -88,11 +90,18 @@ class _DashboardSupervisorState extends State<DashboardSupervisor> {
   }
   
   final List<Widget> _screens = [
-    const HomeSupervisorScreen(),
-    const LaporanScreen(),
+    const HomeSupervisorScreen(), // 0
+    const LaporanScreen(), // 1
+    const LaporanInsentifGuruScreen(), // 2
+    const PengaturanAkunScreen(), // 3
   ];
   
-  final List<String> _titles = ['Dashboard', 'Laporan'];
+  final List<String> _titles = [
+    'Dashboard',
+    'Laporan Absensi',
+    'Laporan Insentif Guru',
+    'Pengaturan Akun',
+  ];
   
   void changeTab(int index) {
     setState(() {
@@ -181,23 +190,97 @@ class _DashboardSupervisorState extends State<DashboardSupervisor> {
           ),
         ],
       ),
-      body: _screens[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.teal,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assessment),
-            label: 'Laporan',
-          ),
-        ],
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(color: Colors.teal),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text(
+                    'GMQ ABSENSI',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    authProvider.currentUser?.name ?? '',
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                  const Text(
+                    'Supervisor',
+                    style: TextStyle(color: Colors.white70, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.dashboard),
+              title: const Text('Dashboard'),
+              selected: _selectedIndex == 0,
+              onTap: () {
+                setState(() => _selectedIndex = 0);
+                Navigator.pop(context);
+              },
+            ),
+            
+            // Laporan Parent
+            ExpansionTile(
+              leading: const Icon(Icons.assessment),
+              title: const Text('Laporan'),
+              initiallyExpanded: _selectedIndex == 1 || _selectedIndex == 2,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.calendar_month),
+                  title: const Text('Laporan Absensi'),
+                  selected: _selectedIndex == 1,
+                  contentPadding: const EdgeInsets.only(left: 32),
+                  onTap: () {
+                    setState(() => _selectedIndex = 1);
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.payments),
+                  title: const Text('Laporan Insentif Guru'),
+                  selected: _selectedIndex == 2,
+                  contentPadding: const EdgeInsets.only(left: 32),
+                  onTap: () {
+                    setState(() => _selectedIndex = 2);
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+            
+            // Pengaturan Parent
+            ExpansionTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Pengaturan'),
+              initiallyExpanded: _selectedIndex == 3,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.manage_accounts),
+                  title: const Text('Pengaturan Akun'),
+                  selected: _selectedIndex == 3,
+                  contentPadding: const EdgeInsets.only(left: 32),
+                  onTap: () {
+                    setState(() => _selectedIndex = 3);
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
+      body: _screens[_selectedIndex],
     );
   }
 }

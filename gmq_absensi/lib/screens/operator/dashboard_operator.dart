@@ -11,6 +11,8 @@ import '../../widgets/confetti_overlay.dart';
 import '../../widgets/dashboard_banner_card.dart';
 import '../shared/input_screen.dart';
 import '../shared/laporan_screen_mobile.dart';
+import '../shared/laporan_insentif_screen.dart';
+import '../superadmin/pengaturan_akun_screen.dart';
 
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -94,12 +96,20 @@ class _DashboardOperatorState extends State<DashboardOperator> {
   int _offlineCount = 0;
   
   final List<Widget> _screens = [
-    const HomeOperatorScreen(),
-    const InputScreen(),
-    const LaporanScreenMobile(),
+    const HomeOperatorScreen(), // 0
+    const InputScreen(), // 1
+    const LaporanScreenMobile(), // 2
+    const LaporanInsentifGuruScreen(), // 3
+    const PengaturanAkunScreen(), // 4
   ];
   
-  final List<String> _titles = ['Dashboard', 'Input Absen', 'Laporan'];
+  final List<String> _titles = [
+    'Dashboard',
+    'Input Absen',
+    'Laporan Absensi',
+    'Laporan Insentif Guru',
+    'Pengaturan Akun',
+  ];
   
   @override
   void initState() {
@@ -263,33 +273,116 @@ class _DashboardOperatorState extends State<DashboardOperator> {
           ),
         ],
       ),
-      body: _screens[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-          _checkOfflineData();
-          _checkConnectivity();
-        },
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.teal,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.edit_note),
-            label: 'Input',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assessment),
-            label: 'Laporan',
-          ),
-        ],
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(color: Colors.teal),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text(
+                    'GMQ ABSENSI',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    authProvider.currentUser?.name ?? '',
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                  const Text(
+                    'Operator',
+                    style: TextStyle(color: Colors.white70, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.dashboard),
+              title: const Text('Dashboard'),
+              selected: _selectedIndex == 0,
+              onTap: () {
+                setState(() => _selectedIndex = 0);
+                _checkOfflineData();
+                _checkConnectivity();
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.edit_note),
+              title: const Text('Input Absen'),
+              selected: _selectedIndex == 1,
+              onTap: () {
+                setState(() => _selectedIndex = 1);
+                _checkOfflineData();
+                _checkConnectivity();
+                Navigator.pop(context);
+              },
+            ),
+            
+            // Laporan Parent
+            ExpansionTile(
+              leading: const Icon(Icons.assessment),
+              title: const Text('Laporan'),
+              initiallyExpanded: _selectedIndex == 2 || _selectedIndex == 3,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.calendar_month),
+                  title: const Text('Laporan Absensi'),
+                  selected: _selectedIndex == 2,
+                  contentPadding: const EdgeInsets.only(left: 32),
+                  onTap: () {
+                    setState(() => _selectedIndex = 2);
+                    _checkOfflineData();
+                    _checkConnectivity();
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.payments),
+                  title: const Text('Laporan Insentif Guru'),
+                  selected: _selectedIndex == 3,
+                  contentPadding: const EdgeInsets.only(left: 32),
+                  onTap: () {
+                    setState(() => _selectedIndex = 3);
+                    _checkOfflineData();
+                    _checkConnectivity();
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+            
+            // Pengaturan Parent
+            ExpansionTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Pengaturan'),
+              initiallyExpanded: _selectedIndex == 4,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.manage_accounts),
+                  title: const Text('Pengaturan Akun'),
+                  selected: _selectedIndex == 4,
+                  contentPadding: const EdgeInsets.only(left: 32),
+                  onTap: () {
+                    setState(() => _selectedIndex = 4);
+                    _checkOfflineData();
+                    _checkConnectivity();
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
+      body: _screens[_selectedIndex],
     );
   }
 }
