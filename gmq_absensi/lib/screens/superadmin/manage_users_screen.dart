@@ -540,32 +540,55 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           ),
                         ],
                       ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.password, color: Colors.orange),
-                            onPressed: () => _adminChangePasswordDialog(user['id'], user['email']),
-                            tooltip: 'Ganti Password',
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              user['is_active'] ? Icons.block : Icons.check_circle,
-                              color: user['is_active'] ? Colors.red : Colors.green,
+                      trailing: PopupMenuButton<String>(
+                        icon: const Icon(Icons.more_vert),
+                        onSelected: (value) {
+                          if (value == 'password') {
+                            _adminChangePasswordDialog(user['id'], user['email']);
+                          } else if (value == 'status') {
+                            _toggleUserStatus(user['id'], user['is_active']);
+                          } else if (value == 'edit') {
+                            _showForm(user: user);
+                          } else if (value == 'delete') {
+                            _confirmDeleteUser(user['id'], user['email']);
+                          }
+                        },
+                        itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                          const PopupMenuItem<String>(
+                            value: 'password',
+                            child: ListTile(
+                              leading: Icon(Icons.password, color: Colors.orange),
+                              title: Text('Ganti Password'),
+                              contentPadding: EdgeInsets.zero,
                             ),
-                            onPressed: () => _toggleUserStatus(user['id'], user['is_active']),
-                            tooltip: user['is_active'] ? 'Nonaktifkan' : 'Aktifkan',
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.blue),
-                            onPressed: () => _showForm(user: user),
-                            tooltip: 'Edit User',
+                          PopupMenuItem<String>(
+                            value: 'status',
+                            child: ListTile(
+                              leading: Icon(
+                                user['is_active'] ? Icons.block : Icons.check_circle,
+                                color: user['is_active'] ? Colors.red : Colors.green,
+                              ),
+                              title: Text(user['is_active'] ? 'Nonaktifkan' : 'Aktifkan'),
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                          ),
+                          const PopupMenuItem<String>(
+                            value: 'edit',
+                            child: ListTile(
+                              leading: Icon(Icons.edit, color: Colors.blue),
+                              title: Text('Edit User'),
+                              contentPadding: EdgeInsets.zero,
+                            ),
                           ),
                           if (user['email'] != 'griyamahiralquran@gmail.com')
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _confirmDeleteUser(user['id'], user['email']),
-                              tooltip: 'Hapus User',
+                            const PopupMenuItem<String>(
+                              value: 'delete',
+                              child: ListTile(
+                                leading: Icon(Icons.delete, color: Colors.red),
+                                title: Text('Hapus User'),
+                                contentPadding: EdgeInsets.zero,
+                              ),
                             ),
                         ],
                       ),
