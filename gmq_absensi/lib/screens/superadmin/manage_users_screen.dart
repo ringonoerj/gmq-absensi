@@ -347,6 +347,69 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
       print('Error toggling status: $e');
     }
   }
+
+  Future<void> _confirmDeleteUser(String userId, String email) async {
+    if (email == 'griyamahiralquran@gmail.com') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('User utama tidak dapat dihapus!'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Konfirmasi Hapus'),
+        content: Text('Apakah Anda yakin ingin menghapus user dengan email $email? Tindakan ini tidak dapat dibatalkan.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(_, false),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(_, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Hapus'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      await _deleteUser(userId);
+    }
+  }
+
+  Future<void> _deleteUser(String userId) async {
+    try {
+      await SupabaseService.client
+          .from('users')
+          .delete()
+          .eq('id', userId);
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('User berhasil dihapus'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        _loadData();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal menghapus user: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -435,7 +498,14 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           IconButton(
                             icon: const Icon(Icons.edit, color: Colors.blue),
                             onPressed: () => _showForm(user: user),
+                            tooltip: 'Edit User',
                           ),
+                          if (user['email'] != 'griyamahiralquran@gmail.com')
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => _confirmDeleteUser(user['id'], user['email']),
+                              tooltip: 'Hapus User',
+                            ),
                         ],
                       ),
                     ),
