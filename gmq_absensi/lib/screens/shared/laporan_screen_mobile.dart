@@ -73,13 +73,15 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
       _unitList = (cachedUnits as List)
           .map((j) => UnitModel.fromJson(Map<String, dynamic>.from(j as Map)))
           .toList();
+      _unitList.sort((a, b) => a.name.compareTo(b.name));
     }
     
     // Load from network
     try {
       final unitResponse = await SupabaseService.client
           .from('unit_pendidikan')
-          .select();
+          .select()
+          .order('name');
       _unitList = (unitResponse as List).map((j) => UnitModel.fromJson(j as Map<String, dynamic>)).toList();
       await CacheService.saveData('units', unitResponse);
     } catch (e) {
@@ -96,6 +98,7 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
         _kelasList = (cachedKelas as List)
             .map((j) => KelasModel.fromJson(Map<String, dynamic>.from(j as Map)))
             .toList();
+        _kelasList.sort((a, b) => a.name.compareTo(b.name));
       });
     }
     
@@ -103,7 +106,8 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
       final response = await SupabaseService.client
           .from('kelas')
           .select()
-          .eq('unit_id', unitId);
+          .eq('unit_id', unitId)
+          .order('name');
       setState(() {
         _kelasList = (response as List).map((j) => KelasModel.fromJson(j as Map<String, dynamic>)).toList();
       });
@@ -118,6 +122,7 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
     if (cachedGuru != null) {
       setState(() {
         _guruList = (cachedGuru as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+        _guruList.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
       });
     }
     
@@ -125,7 +130,8 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
       final response = await SupabaseService.client
           .from('guru')
           .select()
-          .contains('unit_ids', [unitId]);
+          .contains('unit_ids', [unitId])
+          .order('name');
       setState(() {
         _guruList = List<Map<String, dynamic>>.from(response as List);
       });
@@ -141,6 +147,7 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
     if (cachedSiswa != null) {
       setState(() {
         _siswaList = (cachedSiswa as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+        _siswaList.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
       });
     }
     
@@ -149,7 +156,8 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
           .from('siswa')
           .select()
           .eq('unit_id', unitId)
-          .eq('kelas_id', kelasId);
+          .eq('kelas_id', kelasId)
+          .order('name');
       setState(() {
         _siswaList = List<Map<String, dynamic>>.from(response as List);
       });
@@ -166,7 +174,7 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
       final now = DateTime.now();
       
       // Selected Month query
-      final response = await SupabaseService.client
+      var query = SupabaseService.client
           .from('absensi')
           .select()
           .eq('user_id', _selectedUserId!)
@@ -179,6 +187,15 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
               .toIso8601String()
               .split('T')
               .first);
+              
+      if (_selectedUnitId != null) {
+        query = query.eq('unit_id', _selectedUnitId!);
+      }
+      if (_selectedKelasId != null && _selectedKelasId != 0) {
+        query = query.eq('kelas_id', _selectedKelasId!);
+      }
+      
+      final response = await query;
       
       final Map<DateTime, List<Color>> marks = {};
       int hadir = 0, izin = 0, sakit = 0, alpha = 0;
@@ -215,7 +232,7 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
         sakitIni = sakit;
         alphaIni = alpha;
       } else {
-        final responseIni = await SupabaseService.client
+        var queryIni = SupabaseService.client
             .from('absensi')
             .select()
             .eq('user_id', _selectedUserId!)
@@ -228,6 +245,15 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
                 .toIso8601String()
                 .split('T')
                 .first);
+                
+        if (_selectedUnitId != null) {
+          queryIni = queryIni.eq('unit_id', _selectedUnitId!);
+        }
+        if (_selectedKelasId != null && _selectedKelasId != 0) {
+          queryIni = queryIni.eq('kelas_id', _selectedKelasId!);
+        }
+        
+        final responseIni = await queryIni;
                 
         for (var item in responseIni) {
           switch (item['status']) {
@@ -256,97 +282,115 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
     });
     
     try {
+      final startDate = DateTime(_focusedDay.year, _focusedDay.month, 1).toIso8601String().split('T').first;
+      final endDate = DateTime(_focusedDay.year, _focusedDay.month + 1, 0).toIso8601String().split('T').first;
+      
+      // Load holidays for this month
+      final holidayRes = await SupabaseService.client
+          .from('libur_nasional')
+          .select()
+          .gte('tanggal', startDate)
+          .lte('tanggal', endDate);
+      final monthHolidays = List<Map<String, dynamic>>.from(holidayRes as List);
+
+      int countHolidaysForUnit(int? unitId) {
+        if (unitId == null) {
+          return monthHolidays.where((h) => h['unit_id'] == null).length;
+        }
+        return monthHolidays.where((h) => h['unit_id'] == null || h['unit_id'] == unitId).length;
+      }
+      
+      int countHolidaysForUnits(List<dynamic>? unitIds) {
+        if (unitIds == null || unitIds.isEmpty) {
+          return monthHolidays.where((h) => h['unit_id'] == null).length;
+        }
+        return monthHolidays.where((h) => h['unit_id'] == null || unitIds.contains(h['unit_id'])).length;
+      }
+
+      // Fetch all attendance for this month
+      var absensiQuery = SupabaseService.client
+          .from('absensi')
+          .select('user_id, status, unit_id, kelas_id, date')
+          .gte('date', startDate)
+          .lte('date', endDate);
+          
       if (_summaryType == 'guru') {
-        var query = SupabaseService.client.from('guru').select();
+        absensiQuery = absensiQuery.eq('user_type', 'guru');
+      } else {
+        absensiQuery = absensiQuery.eq('user_type', 'siswa');
+      }
+      
+      if (_selectedUnitId != null) {
+        absensiQuery = absensiQuery.eq('unit_id', _selectedUnitId!);
+      }
+      if (_summaryType == 'siswa' && _selectedKelasId != null && _selectedKelasId != 0) {
+        absensiQuery = absensiQuery.eq('kelas_id', _selectedKelasId!);
+      }
+      
+      final absensiData = await absensiQuery;
+      final absensiList = List<Map<String, dynamic>>.from(absensiData as List);
+
+      if (_summaryType == 'guru') {
+        dynamic query = SupabaseService.client.from('guru').select();
         if (_selectedUnitId != null) {
           query = query.contains('unit_ids', [_selectedUnitId!]);
         }
+        query = query.order('name');
         final guruList = await query;
         
         for (var guru in guruList) {
-          final hadirData = await SupabaseService.client
-              .from('absensi')
-              .select('id')
-              .eq('user_id', guru['id'])
-              .eq('user_type', 'guru')
-              .eq('status', 'hadir')
-              .gte('date', DateTime(_focusedDay.year, _focusedDay.month, 1)
-                  .toIso8601String()
-                  .split('T')
-                  .first)
-              .lte('date', DateTime(_focusedDay.year, _focusedDay.month + 1, 0)
-                  .toIso8601String()
-                  .split('T')
-                  .first);
+          final int guruId = guru['id'];
+          final guruAbsensi = absensiList.where((a) => a['user_id'] == guruId);
           
-          final izinData = await SupabaseService.client
-              .from('absensi')
-              .select('id')
-              .eq('user_id', guru['id'])
-              .eq('user_type', 'guru')
-              .eq('status', 'izin')
-              .gte('date', DateTime(_focusedDay.year, _focusedDay.month, 1)
-                  .toIso8601String()
-                  .split('T')
-                  .first)
-              .lte('date', DateTime(_focusedDay.year, _focusedDay.month + 1, 0)
-                  .toIso8601String()
-                  .split('T')
-                  .first);
+          int hadirCount = guruAbsensi.where((a) => a['status'] == 'hadir').length;
+          int izinCount = guruAbsensi.where((a) => a['status'] == 'izin').length;
+          int sakitCount = guruAbsensi.where((a) => a['status'] == 'sakit').length;
+          int alphaCount = guruAbsensi.where((a) => a['status'] == 'alpha').length;
+          
+          final List<dynamic>? unitIds = guru['unit_ids'] as List<dynamic>?;
+          int liburCount = countHolidaysForUnits(unitIds);
           
           _summaryData.add({
             'name': guru['name'],
             'group': '-',
-            'hadir': (hadirData as List).length,
-            'izin': (izinData as List).length,
+            'hadir': hadirCount,
+            'izin': izinCount,
+            'sakit': sakitCount,
+            'alpha': alphaCount,
+            'libur': liburCount,
           });
         }
       } else {
-        var query = SupabaseService.client.from('siswa').select();
+        dynamic query = SupabaseService.client.from('siswa').select();
         if (_selectedUnitId != null) {
           query = query.eq('unit_id', _selectedUnitId!);
         }
         if (_selectedKelasId != null && _selectedKelasId != 0) {
           query = query.eq('kelas_id', _selectedKelasId!);
         }
+        query = query.order('name');
         final siswaList = await query;
         
         for (var siswa in siswaList) {
-          final hadirData = await SupabaseService.client
-              .from('absensi')
-              .select('id')
-              .eq('user_id', siswa['id'])
-              .eq('user_type', 'siswa')
-              .eq('status', 'hadir')
-              .gte('date', DateTime(_focusedDay.year, _focusedDay.month, 1)
-                  .toIso8601String()
-                  .split('T')
-                  .first)
-              .lte('date', DateTime(_focusedDay.year, _focusedDay.month + 1, 0)
-                  .toIso8601String()
-                  .split('T')
-                  .first);
+          final int siswaId = siswa['id'];
+          final siswaAbsensi = absensiList.where((a) => a['user_id'] == siswaId);
           
-          final izinData = await SupabaseService.client
-              .from('absensi')
-              .select('id')
-              .eq('user_id', siswa['id'])
-              .eq('user_type', 'siswa')
-              .eq('status', 'izin')
-              .gte('date', DateTime(_focusedDay.year, _focusedDay.month, 1)
-                  .toIso8601String()
-                  .split('T')
-                  .first)
-              .lte('date', DateTime(_focusedDay.year, _focusedDay.month + 1, 0)
-                  .toIso8601String()
-                  .split('T')
-                  .first);
+          int hadirCount = siswaAbsensi.where((a) => a['status'] == 'hadir').length;
+          int izinCount = siswaAbsensi.where((a) => a['status'] == 'izin').length;
+          int sakitCount = siswaAbsensi.where((a) => a['status'] == 'sakit').length;
+          int alphaCount = siswaAbsensi.where((a) => a['status'] == 'alpha').length;
+          
+          final int? unitId = siswa['unit_id'] as int?;
+          int liburCount = countHolidaysForUnit(unitId);
           
           _summaryData.add({
             'name': siswa['name'],
             'group': '-',
-            'hadir': (hadirData as List).length,
-            'izin': (izinData as List).length,
+            'hadir': hadirCount,
+            'izin': izinCount,
+            'sakit': sakitCount,
+            'alpha': alphaCount,
+            'libur': liburCount,
           });
         }
       }
@@ -364,6 +408,8 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
       reportType: _selectedKategori ?? 'guru',
       userId: _selectedUserId,
       month: _focusedDay,
+      unitId: _selectedUnitId,
+      kelasId: _selectedKelasId,
     );
   }
   
@@ -532,6 +578,7 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
                         ),
                       )
                     : SingleChildScrollView(
+                        padding: const EdgeInsets.only(bottom: 80),
                         child: Column(
                           children: [
                             Card(
@@ -690,6 +737,7 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
                                     ),
                                   )
                                 : ListView.builder(
+                                    padding: const EdgeInsets.only(bottom: 80),
                                     itemCount: _summaryData.length,
                                     itemBuilder: (context, index) {
                                       final item = _summaryData[index];
@@ -737,6 +785,51 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
                                                 child: Text(
                                                   'I: ${item['izin']}',
                                                   style: const TextStyle(color: Colors.orange),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Container(
+                                                padding: const EdgeInsets.symmetric(
+                                                  horizontal: 8,
+                                                  vertical: 4,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blue.shade100,
+                                                  borderRadius: BorderRadius.circular(12),
+                                                ),
+                                                child: Text(
+                                                  'S: ${item['sakit'] ?? 0}',
+                                                  style: const TextStyle(color: Colors.blue),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Container(
+                                                padding: const EdgeInsets.symmetric(
+                                                  horizontal: 8,
+                                                  vertical: 4,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.red.shade100,
+                                                  borderRadius: BorderRadius.circular(12),
+                                                ),
+                                                child: Text(
+                                                  'A: ${item['alpha'] ?? 0}',
+                                                  style: const TextStyle(color: Colors.red),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Container(
+                                                padding: const EdgeInsets.symmetric(
+                                                  horizontal: 8,
+                                                  vertical: 4,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.purple.shade100,
+                                                  borderRadius: BorderRadius.circular(12),
+                                                ),
+                                                child: Text(
+                                                  'L: ${item['libur'] ?? 0}',
+                                                  style: const TextStyle(color: Colors.purple),
                                                 ),
                                               ),
                                             ],

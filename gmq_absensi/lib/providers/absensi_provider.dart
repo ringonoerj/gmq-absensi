@@ -13,7 +13,7 @@ class AbsensiProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   
-  Future<List<AbsensiModel>> getAbsensiByDate(DateTime date, {String? userType, int? userId}) async {
+  Future<List<AbsensiModel>> getAbsensiByDate(DateTime date, {String? userType, int? userId, int? unitId, int? kelasId}) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -37,6 +37,12 @@ class AbsensiProvider extends ChangeNotifier {
       }
       if (userId != null) {
         query = query.eq('user_id', userId);
+      }
+      if (unitId != null) {
+        query = query.eq('unit_id', unitId);
+      }
+      if (kelasId != null) {
+        query = query.eq('kelas_id', kelasId);
       }
       
       final response = await query;
@@ -62,6 +68,8 @@ class AbsensiProvider extends ChangeNotifier {
     String? userName,
     String? unitName,
     String? className,
+    int? unitId,
+    int? kelasId,
   }) async {
     _isLoading = true;
     _errorMessage = null;
@@ -90,6 +98,8 @@ class AbsensiProvider extends ChangeNotifier {
             'unit_name': unitName ?? 'Unit',
             'class_name': className ?? '-',
             'created_at': DateTime.now().toIso8601String(),
+            'unit_id': unitId,
+            'kelas_id': kelasId,
           });
           offlineCount++;
         }
@@ -106,12 +116,21 @@ class AbsensiProvider extends ChangeNotifier {
       for (var date in dates) {
         final formattedDate = date.toIso8601String().split('T').first;
         
-        final existing = await SupabaseService.client
+        var query = SupabaseService.client
             .from('absensi')
             .select()
             .eq('user_type', userType)
             .eq('user_id', userId)
             .eq('date', formattedDate);
+            
+        if (unitId != null) {
+          query = query.eq('unit_id', unitId);
+        }
+        if (kelasId != null) {
+          query = query.eq('kelas_id', kelasId);
+        }
+        
+        final existing = await query;
         
         if ((existing as List).isEmpty) {
           await SupabaseService.client.from('absensi').insert({
@@ -121,6 +140,8 @@ class AbsensiProvider extends ChangeNotifier {
             'status': status,
             'izin_reason': izinReason,
             'recorded_by': recordedBy,
+            'unit_id': unitId,
+            'kelas_id': kelasId,
           });
           successCount++;
         } else {
@@ -166,13 +187,24 @@ class AbsensiProvider extends ChangeNotifier {
         final status = item['status'] as String;
         final izinReason = item['izin_reason'] as String?;
         final recordedBy = item['recorded_by'] as String;
+        final unitId = item['unit_id'] as int?;
+        final kelasId = item['kelas_id'] as int?;
         
-        final existing = await SupabaseService.client
+        var query = SupabaseService.client
             .from('absensi')
             .select()
             .eq('user_type', userType)
             .eq('user_id', userId)
             .eq('date', formattedDate);
+            
+        if (unitId != null) {
+          query = query.eq('unit_id', unitId);
+        }
+        if (kelasId != null) {
+          query = query.eq('kelas_id', kelasId);
+        }
+        
+        final existing = await query;
         
         if ((existing as List).isEmpty) {
           await SupabaseService.client.from('absensi').insert({
@@ -182,6 +214,8 @@ class AbsensiProvider extends ChangeNotifier {
             'status': status,
             'izin_reason': izinReason,
             'recorded_by': recordedBy,
+            'unit_id': unitId,
+            'kelas_id': kelasId,
           });
         }
         successCount++;
@@ -221,9 +255,11 @@ class AbsensiProvider extends ChangeNotifier {
       for (var item in offlineQueue) {
         if (item['date'] == formattedDate) {
           if (userType == null || item['user_type'] == userType) {
-            final status = item['status'] as String;
-            if (stats.containsKey(status)) {
-              stats[status] = (stats[status] ?? 0) + 1;
+            if (unitId == null || item['unit_id'] == unitId) {
+              final status = item['status'] as String;
+              if (stats.containsKey(status)) {
+                stats[status] = (stats[status] ?? 0) + 1;
+              }
             }
           }
         }
@@ -239,6 +275,9 @@ class AbsensiProvider extends ChangeNotifier {
       
       if (userType != null) {
         query = query.eq('user_type', userType);
+      }
+      if (unitId != null) {
+        query = query.eq('unit_id', unitId);
       }
       
       final response = await query;
@@ -260,18 +299,26 @@ class AbsensiProvider extends ChangeNotifier {
     }
   }
   
-  Future<Map<DateTime, List<Color>>> getMarkedDates(int userId, String userType, DateTime month) async {
+  Future<Map<DateTime, List<Color>>> getMarkedDates(int userId, String userType, DateTime month, {int? unitId, int? kelasId}) async {
     final startDate = DateTime(month.year, month.month, 1);
     final endDate = DateTime(month.year, month.month + 1, 0);
     
-    final response = await SupabaseService.client
+    var query = SupabaseService.client
         .from('absensi')
         .select('date, status')
         .eq('user_id', userId)
         .eq('user_type', userType)
         .gte('date', startDate.toIso8601String().split('T').first)
         .lte('date', endDate.toIso8601String().split('T').first);
+        
+    if (unitId != null) {
+      query = query.eq('unit_id', unitId);
+    }
+    if (kelasId != null) {
+      query = query.eq('kelas_id', kelasId);
+    }
     
+    final response = await query;
     final Map<DateTime, List<Color>> markedDates = {};
     
     for (var item in (response as List)) {

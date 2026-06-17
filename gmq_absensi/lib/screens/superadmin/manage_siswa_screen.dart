@@ -50,6 +50,7 @@ class _ManageSiswaScreenState extends State<ManageSiswaScreen> {
           .from('unit_pendidikan')
           .select();
       _unitList = (response as List).map((j) => UnitModel.fromJson(j as Map<String, dynamic>)).toList();
+      _unitList.sort((a, b) => a.name.compareTo(b.name));
       setState(() {});
     } catch (e) {
       print('Error loading units: $e');
@@ -62,6 +63,7 @@ class _ManageSiswaScreenState extends State<ManageSiswaScreen> {
           .from('kelas')
           .select();
       _allKelasList = (response as List).map((j) => KelasModel.fromJson(j as Map<String, dynamic>)).toList();
+      _allKelasList.sort((a, b) => a.name.compareTo(b.name));
       setState(() {});
     } catch (e) {
       print('Error loading all classes: $e');
@@ -74,7 +76,9 @@ class _ManageSiswaScreenState extends State<ManageSiswaScreen> {
           .from('kelas')
           .select()
           .eq('unit_id', unitId);
-      return (response as List).map((j) => KelasModel.fromJson(j as Map<String, dynamic>)).toList();
+      final list = (response as List).map((j) => KelasModel.fromJson(j as Map<String, dynamic>)).toList();
+      list.sort((a, b) => a.name.compareTo(b.name));
+      return list;
     } catch (e) {
       print('Error loading kelas for unit: $e');
       return [];
@@ -336,6 +340,7 @@ class _ManageSiswaScreenState extends State<ManageSiswaScreen> {
                     ),
                   )
                 : ListView.builder(
+                    padding: const EdgeInsets.only(bottom: 80),
                     itemCount: provider.data.length,
                     itemBuilder: (context, index) {
                       final siswa = provider.data[index];

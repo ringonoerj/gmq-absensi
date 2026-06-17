@@ -45,7 +45,7 @@ class _LaporanInsentifGuruScreenState extends State<LaporanInsentifGuruScreen> {
       // 1. Fetch units, gurus, rates, and absensi in parallel
       final results = await Future.wait([
         SupabaseService.client.from('unit_pendidikan').select().order('name'),
-        SupabaseService.client.from('guru').select(),
+        SupabaseService.client.from('guru').select().order('name'),
         SupabaseService.client.from('insentif_guru').select(),
         SupabaseService.client
             .from('absensi')
@@ -95,11 +95,29 @@ class _LaporanInsentifGuruScreenState extends State<LaporanInsentifGuruScreen> {
       rateMap['${gId}_$uId'] = nominal;
     }
 
-    // Create attendance mapping count: { guru_id: count_hadir }
-    final Map<int, int> attendanceMap = {};
+    // Create attendance mapping count: { "guru_id_unit_id": count_hadir }
+    final Map<String, int> attendanceMap = {};
     for (var a in _absensiList) {
       final int guruId = a['user_id'] as int;
-      attendanceMap[guruId] = (attendanceMap[guruId] ?? 0) + 1;
+      final int? unitId = a['unit_id'] as int?;
+      if (unitId != null) {
+        final key = '${guruId}_$unitId';
+        attendanceMap[key] = (attendanceMap[key] ?? 0) + 1;
+      } else {
+        // Fallback for legacy records: map to guru's legacy unit_id or first unit in unit_ids
+        final guru = _gurus.firstWhere((g) => g['id'] == guruId, orElse: () => {});
+        if (guru.isNotEmpty) {
+          final int? legacyUnitId = guru['unit_id'] as int?;
+          final List<dynamic>? uIds = guru['unit_ids'] as List<dynamic>?;
+          if (legacyUnitId != null) {
+            final key = '${guruId}_$legacyUnitId';
+            attendanceMap[key] = (attendanceMap[key] ?? 0) + 1;
+          } else if (uIds != null && uIds.isNotEmpty) {
+            final key = '${guruId}_${uIds.first}';
+            attendanceMap[key] = (attendanceMap[key] ?? 0) + 1;
+          }
+        }
+      }
     }
 
     // Process per Unit
@@ -127,7 +145,7 @@ class _LaporanInsentifGuruScreenState extends State<LaporanInsentifGuruScreen> {
           final int guruId = guru['id'] as int;
           final String guruName = guru['name'] as String;
           
-          final int hadirCount = attendanceMap[guruId] ?? 0;
+          final int hadirCount = attendanceMap['${guruId}_$unitId'] ?? 0;
           final int rate = rateMap['${guruId}_$unitId'] ?? 0;
           final int totalIncentive = hadirCount * rate;
 

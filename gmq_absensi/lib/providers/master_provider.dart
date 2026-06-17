@@ -10,7 +10,7 @@ class MasterProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   
-  Future<void> fetchData(String table, {String? orderBy, Map<String, dynamic>? filter}) async {
+  Future<void> fetchData(String table, {String? orderBy, bool ascending = true, Map<String, dynamic>? filter}) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -25,7 +25,7 @@ class MasterProvider extends ChangeNotifier {
       }
       
       if (orderBy != null) {
-        query = query.order(orderBy);
+        query = query.order(orderBy, ascending: ascending);
       }
       
       final response = await query;

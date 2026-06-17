@@ -45,6 +45,8 @@ class CacheService {
             'status': rawEntry['status'],
             'izin_reason': rawEntry['izin_reason'] ?? rawEntry['reason'],
             'recorded_by': rawEntry['recorded_by'],
+            'unit_id': rawEntry['unit_id'],
+            'kelas_id': rawEntry['kelas_id'],
           };
           
           await SupabaseService.client.from('absensi').insert(cleanEntry);

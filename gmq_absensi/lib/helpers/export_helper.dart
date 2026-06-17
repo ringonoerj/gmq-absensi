@@ -11,6 +11,8 @@ class ExportHelper {
     required String reportType,
     int? userId,
     required DateTime month,
+    int? unitId,
+    int? kelasId,
   }) async {
     // Show a loading dialog
     showDialog(
@@ -29,6 +31,12 @@ class ExportHelper {
       
       if (userId != null) {
         query = query.eq('user_id', userId).eq('user_type', reportType);
+      }
+      if (unitId != null) {
+        query = query.eq('unit_id', unitId);
+      }
+      if (kelasId != null && kelasId != 0) {
+        query = query.eq('kelas_id', kelasId);
       }
       
       final absensiData = await query;

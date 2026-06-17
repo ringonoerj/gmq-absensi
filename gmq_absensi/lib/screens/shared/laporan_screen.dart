@@ -57,7 +57,8 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
     try {
       final response = await SupabaseService.client
           .from('unit_pendidikan')
-          .select();
+          .select()
+          .order('name');
       setState(() {
         _unitList = (response as List).map((j) => UnitModel.fromJson(j as Map<String, dynamic>)).toList();
       });
@@ -71,7 +72,8 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
       final response = await SupabaseService.client
           .from('kelas')
           .select()
-          .eq('unit_id', unitId);
+          .eq('unit_id', unitId)
+          .order('name');
       setState(() {
         _kelasList = (response as List).map((j) => KelasModel.fromJson(j as Map<String, dynamic>)).toList();
       });
@@ -95,7 +97,8 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
       final response = await SupabaseService.client
           .from('guru')
           .select()
-          .contains('unit_ids', [unitId]);
+          .contains('unit_ids', [unitId])
+          .order('name');
       setState(() {
         _guruList = List<Map<String, dynamic>>.from(response as List);
       });
@@ -106,7 +109,7 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
   
   Future<void> _loadSiswa(int unitId, int kelasId) async {
     try {
-      var query = SupabaseService.client
+      dynamic query = SupabaseService.client
           .from('siswa')
           .select()
           .eq('unit_id', unitId);
@@ -114,6 +117,8 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
       if (kelasId != 0) {
         query = query.eq('kelas_id', kelasId);
       }
+      
+      query = query.order('name');
       
       final response = await query;
       setState(() {
@@ -131,13 +136,22 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
       final now = DateTime.now();
       
       // Selected Month query
-      final response = await SupabaseService.client
+      var query = SupabaseService.client
           .from('absensi')
           .select()
           .eq('user_id', _selectedUserId!)
           .eq('user_type', _selectedKategori!)
           .gte('date', DateTime(_focusedDay.year, _focusedDay.month, 1).toIso8601String().split('T').first)
           .lte('date', DateTime(_focusedDay.year, _focusedDay.month + 1, 0).toIso8601String().split('T').first);
+          
+      if (_selectedUnitId != null) {
+        query = query.eq('unit_id', _selectedUnitId!);
+      }
+      if (_selectedKelasId != null && _selectedKelasId != 0) {
+        query = query.eq('kelas_id', _selectedKelasId!);
+      }
+      
+      final response = await query;
       
       final Map<DateTime, List<Color>> marks = {};
       int hadir = 0, izin = 0, sakit = 0, alpha = 0;
@@ -163,13 +177,22 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
         sakitIni = sakit;
         alphaIni = alpha;
       } else {
-        final responseIni = await SupabaseService.client
+        var queryIni = SupabaseService.client
             .from('absensi')
             .select()
             .eq('user_id', _selectedUserId!)
             .eq('user_type', _selectedKategori!)
             .gte('date', DateTime(now.year, now.month, 1).toIso8601String().split('T').first)
             .lte('date', DateTime(now.year, now.month + 1, 0).toIso8601String().split('T').first);
+            
+        if (_selectedUnitId != null) {
+          queryIni = queryIni.eq('unit_id', _selectedUnitId!);
+        }
+        if (_selectedKelasId != null && _selectedKelasId != 0) {
+          queryIni = queryIni.eq('kelas_id', _selectedKelasId!);
+        }
+        
+        final responseIni = await queryIni;
             
         for (var item in responseIni) {
           switch (item['status']?.toString().toLowerCase()) {
@@ -195,73 +218,115 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
     setState(() => _summaryData = []);
     
     try {
+      final startDate = DateTime(_focusedDay.year, _focusedDay.month, 1).toIso8601String().split('T').first;
+      final endDate = DateTime(_focusedDay.year, _focusedDay.month + 1, 0).toIso8601String().split('T').first;
+      
+      // Load holidays for this month
+      final holidayRes = await SupabaseService.client
+          .from('libur_nasional')
+          .select()
+          .gte('tanggal', startDate)
+          .lte('tanggal', endDate);
+      final monthHolidays = List<Map<String, dynamic>>.from(holidayRes as List);
+
+      int countHolidaysForUnit(int? unitId) {
+        if (unitId == null) {
+          return monthHolidays.where((h) => h['unit_id'] == null).length;
+        }
+        return monthHolidays.where((h) => h['unit_id'] == null || h['unit_id'] == unitId).length;
+      }
+      
+      int countHolidaysForUnits(List<dynamic>? unitIds) {
+        if (unitIds == null || unitIds.isEmpty) {
+          return monthHolidays.where((h) => h['unit_id'] == null).length;
+        }
+        return monthHolidays.where((h) => h['unit_id'] == null || unitIds.contains(h['unit_id'])).length;
+      }
+
+      // Fetch all attendance for this month
+      var absensiQuery = SupabaseService.client
+          .from('absensi')
+          .select('user_id, status, unit_id, kelas_id, date')
+          .gte('date', startDate)
+          .lte('date', endDate);
+          
       if (_summaryType == 'guru') {
-        var query = SupabaseService.client.from('guru').select();
+        absensiQuery = absensiQuery.eq('user_type', 'guru');
+      } else {
+        absensiQuery = absensiQuery.eq('user_type', 'siswa');
+      }
+      
+      if (_selectedUnitId != null) {
+        absensiQuery = absensiQuery.eq('unit_id', _selectedUnitId!);
+      }
+      if (_summaryType == 'siswa' && _selectedKelasId != null && _selectedKelasId != 0) {
+        absensiQuery = absensiQuery.eq('kelas_id', _selectedKelasId!);
+      }
+      
+      final absensiData = await absensiQuery;
+      final absensiList = List<Map<String, dynamic>>.from(absensiData as List);
+
+      if (_summaryType == 'guru') {
+        dynamic query = SupabaseService.client.from('guru').select();
         if (_selectedUnitId != null) {
           query = query.contains('unit_ids', [_selectedUnitId!]);
         }
+        query = query.order('name');
         final guruList = await query;
         
         for (var guru in guruList) {
-          final hadirData = await SupabaseService.client
-              .from('absensi')
-              .select('id')
-              .eq('user_id', guru['id'])
-              .eq('user_type', 'guru')
-              .eq('status', 'hadir')
-              .gte('date', DateTime(_focusedDay.year, _focusedDay.month, 1).toIso8601String().split('T').first)
-              .lte('date', DateTime(_focusedDay.year, _focusedDay.month + 1, 0).toIso8601String().split('T').first);
+          final int guruId = guru['id'];
+          final guruAbsensi = absensiList.where((a) => a['user_id'] == guruId);
           
-          final izinData = await SupabaseService.client
-              .from('absensi')
-              .select('id')
-              .eq('user_id', guru['id'])
-              .eq('user_type', 'guru')
-              .eq('status', 'izin')
-              .gte('date', DateTime(_focusedDay.year, _focusedDay.month, 1).toIso8601String().split('T').first)
-              .lte('date', DateTime(_focusedDay.year, _focusedDay.month + 1, 0).toIso8601String().split('T').first);
+          int hadirCount = guruAbsensi.where((a) => a['status'] == 'hadir').length;
+          int izinCount = guruAbsensi.where((a) => a['status'] == 'izin').length;
+          int sakitCount = guruAbsensi.where((a) => a['status'] == 'sakit').length;
+          int alphaCount = guruAbsensi.where((a) => a['status'] == 'alpha').length;
+          
+          final List<dynamic>? unitIds = guru['unit_ids'] as List<dynamic>?;
+          int liburCount = countHolidaysForUnits(unitIds);
           
           _summaryData.add({
             'name': guru['name'],
             'group': '-',
-            'hadir': (hadirData as List).length,
-            'izin': (izinData as List).length,
+            'hadir': hadirCount,
+            'izin': izinCount,
+            'sakit': sakitCount,
+            'alpha': alphaCount,
+            'libur': liburCount,
           });
         }
       } else {
-        var query = SupabaseService.client.from('siswa').select();
+        dynamic query = SupabaseService.client.from('siswa').select();
         if (_selectedUnitId != null) {
           query = query.eq('unit_id', _selectedUnitId!);
         }
         if (_selectedKelasId != null && _selectedKelasId != 0) {
           query = query.eq('kelas_id', _selectedKelasId!);
         }
+        query = query.order('name');
         final siswaList = await query;
         
         for (var siswa in siswaList) {
-          final hadirData = await SupabaseService.client
-              .from('absensi')
-              .select('id')
-              .eq('user_id', siswa['id'])
-              .eq('user_type', 'siswa')
-              .eq('status', 'hadir')
-              .gte('date', DateTime(_focusedDay.year, _focusedDay.month, 1).toIso8601String().split('T').first)
-              .lte('date', DateTime(_focusedDay.year, _focusedDay.month + 1, 0).toIso8601String().split('T').first);
+          final int siswaId = siswa['id'];
+          final siswaAbsensi = absensiList.where((a) => a['user_id'] == siswaId);
           
-          final izinData = await SupabaseService.client
-              .from('absensi')
-              .select('id')
-              .eq('user_id', siswa['id'])
-              .eq('user_type', 'siswa')
-              .eq('status', 'izin')
-              .gte('date', DateTime(_focusedDay.year, _focusedDay.month, 1).toIso8601String().split('T').first)
-              .lte('date', DateTime(_focusedDay.year, _focusedDay.month + 1, 0).toIso8601String().split('T').first);
+          int hadirCount = siswaAbsensi.where((a) => a['status'] == 'hadir').length;
+          int izinCount = siswaAbsensi.where((a) => a['status'] == 'izin').length;
+          int sakitCount = siswaAbsensi.where((a) => a['status'] == 'sakit').length;
+          int alphaCount = siswaAbsensi.where((a) => a['status'] == 'alpha').length;
+          
+          final int? unitId = siswa['unit_id'] as int?;
+          int liburCount = countHolidaysForUnit(unitId);
           
           _summaryData.add({
             'name': siswa['name'],
             'group': '-',
-            'hadir': (hadirData as List).length,
-            'izin': (izinData as List).length,
+            'hadir': hadirCount,
+            'izin': izinCount,
+            'sakit': sakitCount,
+            'alpha': alphaCount,
+            'libur': liburCount,
           });
         }
       }
@@ -279,6 +344,8 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
       reportType: _selectedKategori ?? 'guru',
       userId: _selectedUserId,
       month: _focusedDay,
+      unitId: _selectedUnitId,
+      kelasId: _selectedKelasId,
     );
   }
 
@@ -471,6 +538,7 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
                 _selectedUserId == null
                     ? const Center(child: Text('Pilih user terlebih dahulu'))
                     : SingleChildScrollView(
+                        padding: const EdgeInsets.only(bottom: 80),
                         child: Column(
                           children: [
                             Card(
@@ -593,6 +661,7 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
                         child: _summaryData.isEmpty
                             ? const Center(child: Text('Belum ada data'))
                             : ListView.builder(
+                                padding: const EdgeInsets.only(bottom: 80),
                                 itemCount: _summaryData.length,
                                 itemBuilder: (context, index) {
                                   final item = _summaryData[index];
@@ -610,6 +679,21 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
                                           Chip(
                                             label: Text('I: ${item['izin']}'),
                                             backgroundColor: Colors.orange.shade100,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Chip(
+                                            label: Text('S: ${item['sakit'] ?? 0}'),
+                                            backgroundColor: Colors.blue.shade100,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Chip(
+                                            label: Text('A: ${item['alpha'] ?? 0}'),
+                                            backgroundColor: Colors.red.shade100,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Chip(
+                                            label: Text('L: ${item['libur'] ?? 0}'),
+                                            backgroundColor: Colors.purple.shade100,
                                           ),
                                         ],
                                       ),

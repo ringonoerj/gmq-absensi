@@ -48,6 +48,7 @@ class _ManageGuruScreenState extends State<ManageGuruScreen> {
           .from('unit_pendidikan')
           .select();
       _unitList = (response as List).map((j) => UnitModel.fromJson(j as Map<String, dynamic>)).toList();
+      _unitList.sort((a, b) => a.name.compareTo(b.name));
       setState(() {});
     } catch (e) {
       print('Error loading units: $e');
@@ -60,6 +61,7 @@ class _ManageGuruScreenState extends State<ManageGuruScreen> {
           .from('kelas')
           .select();
       _allKelasList = (response as List).map((j) => KelasModel.fromJson(j as Map<String, dynamic>)).toList();
+      _allKelasList.sort((a, b) => a.name.compareTo(b.name));
       setState(() {});
     } catch (e) {
       print('Error loading all classes: $e');
@@ -510,6 +512,7 @@ class _ManageGuruScreenState extends State<ManageGuruScreen> {
                     ),
                   )
                 : ListView.builder(
+                    padding: const EdgeInsets.only(bottom: 80),
                     itemCount: provider.data.length,
                     itemBuilder: (context, index) {
                       final guru = provider.data[index];
