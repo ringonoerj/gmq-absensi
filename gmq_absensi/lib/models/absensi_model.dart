@@ -9,6 +9,8 @@ class AbsensiModel {
   final String? izinReason;
   final String? recordedBy;
   final DateTime createdAt;
+  final int? unitId;
+  final int? kelasId;
   
   AbsensiModel({
     this.id,
@@ -19,6 +21,8 @@ class AbsensiModel {
     this.izinReason,
     this.recordedBy,
     required this.createdAt,
+    this.unitId,
+    this.kelasId,
   });
   
   factory AbsensiModel.fromJson(Map<String, dynamic> json) {
@@ -33,6 +37,8 @@ class AbsensiModel {
       createdAt: json['created_at'] != null 
           ? DateTime.parse(json['created_at']) 
           : DateTime.now(),
+      unitId: json['unit_id'],
+      kelasId: json['kelas_id'],
     );
   }
   
@@ -44,6 +50,8 @@ class AbsensiModel {
       'status': status,
       'izin_reason': izinReason,
       'recorded_by': recordedBy,
+      'unit_id': unitId,
+      'kelas_id': kelasId,
     };
   }
   

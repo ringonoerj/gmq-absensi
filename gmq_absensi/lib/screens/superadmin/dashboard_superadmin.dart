@@ -125,7 +125,7 @@ class _DashboardSuperadminState extends State<DashboardSuperadmin> {
     'Laporan Absensi',
     'Laporan Insentif Guru',
     'Pengaturan Akun',
-    'Pengaturan Banner',
+    'Pengaturan Banner & Libur',
     'Pengaturan Insentif Guru',
     'Bulk Upload Data',
     'Backup & Restore Data',
@@ -349,7 +349,7 @@ class _DashboardSuperadminState extends State<DashboardSuperadmin> {
                 ),
                 ListTile(
                   leading: const Icon(Icons.campaign),
-                  title: const Text('Pengaturan Banner'),
+                  title: const Text('Pengaturan Banner & Libur'),
                   selected: _selectedIndex == 9,
                   contentPadding: const EdgeInsets.only(left: 32),
                   onTap: () {

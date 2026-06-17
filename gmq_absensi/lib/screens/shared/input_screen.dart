@@ -30,6 +30,7 @@ class _InputScreenState extends State<InputScreen> {
   List<KelasModel> _kelasList = [];
   List<Map<String, dynamic>> _guruList = [];
   List<Map<String, dynamic>> _siswaList = [];
+  List<Map<String, dynamic>> _holidayList = [];
   
   // UI states
   bool _isLoading = false;
@@ -69,10 +70,17 @@ class _InputScreenState extends State<InputScreen> {
     // Try load from cache first if offline
     if (_isOffline) {
       final cachedUnits = CacheService.getData('units');
+      final cachedHolidays = CacheService.getData('holidays');
       if (cachedUnits != null) {
         _unitList = (cachedUnits as List)
             .map((j) => UnitModel.fromJson(Map<String, dynamic>.from(j as Map)))
             .toList();
+        _unitList.sort((a, b) => a.name.compareTo(b.name));
+      }
+      if (cachedHolidays != null) {
+        _holidayList = (cachedHolidays as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+      }
+      if (cachedUnits != null) {
         setState(() => _isLoading = false);
         return;
       }
@@ -82,11 +90,16 @@ class _InputScreenState extends State<InputScreen> {
     try {
       final unitResponse = await SupabaseService.client
           .from('unit_pendidikan')
-          .select();
+          .select()
+          .order('name');
       _unitList = (unitResponse as List).map((j) => UnitModel.fromJson(j as Map<String, dynamic>)).toList();
-      
-      // Save to cache
       await CacheService.saveData('units', unitResponse);
+      
+      final holidayResponse = await SupabaseService.client
+          .from('libur_nasional')
+          .select();
+      _holidayList = List<Map<String, dynamic>>.from(holidayResponse as List);
+      await CacheService.saveData('holidays', holidayResponse);
     } catch (e) {
       // Try cache as fallback
       final cachedUnits = CacheService.getData('units');
@@ -94,6 +107,11 @@ class _InputScreenState extends State<InputScreen> {
         _unitList = (cachedUnits as List)
             .map((j) => UnitModel.fromJson(Map<String, dynamic>.from(j as Map)))
             .toList();
+        _unitList.sort((a, b) => a.name.compareTo(b.name));
+      }
+      final cachedHolidays = CacheService.getData('holidays');
+      if (cachedHolidays != null) {
+        _holidayList = (cachedHolidays as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
       }
     }
     
@@ -108,6 +126,7 @@ class _InputScreenState extends State<InputScreen> {
           _kelasList = (cachedKelas as List)
               .map((j) => KelasModel.fromJson(Map<String, dynamic>.from(j as Map)))
               .toList();
+          _kelasList.sort((a, b) => a.name.compareTo(b.name));
         });
         return;
       }
@@ -117,7 +136,8 @@ class _InputScreenState extends State<InputScreen> {
       final response = await SupabaseService.client
           .from('kelas')
           .select()
-          .eq('unit_id', unitId);
+          .eq('unit_id', unitId)
+          .order('name');
       setState(() {
         _kelasList = (response as List).map((j) => KelasModel.fromJson(j as Map<String, dynamic>)).toList();
       });
@@ -129,6 +149,7 @@ class _InputScreenState extends State<InputScreen> {
           _kelasList = (cachedKelas as List)
               .map((j) => KelasModel.fromJson(Map<String, dynamic>.from(j as Map)))
               .toList();
+          _kelasList.sort((a, b) => a.name.compareTo(b.name));
         });
       }
     }
@@ -140,6 +161,7 @@ class _InputScreenState extends State<InputScreen> {
       if (cachedGuru != null) {
         setState(() {
           _guruList = (cachedGuru as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+          _guruList.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
         });
         return;
       }
@@ -149,7 +171,8 @@ class _InputScreenState extends State<InputScreen> {
       final response = await SupabaseService.client
           .from('guru')
           .select()
-          .contains('unit_ids', [unitId]);
+          .contains('unit_ids', [unitId])
+          .order('name');
       setState(() {
         _guruList = List<Map<String, dynamic>>.from(response as List);
       });
@@ -159,6 +182,7 @@ class _InputScreenState extends State<InputScreen> {
       if (cachedGuru != null) {
         setState(() {
           _guruList = (cachedGuru as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+          _guruList.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
         });
       }
     }
@@ -172,6 +196,7 @@ class _InputScreenState extends State<InputScreen> {
       if (cachedSiswa != null) {
         setState(() {
           _siswaList = (cachedSiswa as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+          _siswaList.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
         });
         return;
       }
@@ -182,7 +207,8 @@ class _InputScreenState extends State<InputScreen> {
           .from('siswa')
           .select()
           .eq('unit_id', unitId)
-          .eq('kelas_id', kelasId);
+          .eq('kelas_id', kelasId)
+          .order('name');
       setState(() {
         _siswaList = List<Map<String, dynamic>>.from(response as List);
       });
@@ -192,12 +218,29 @@ class _InputScreenState extends State<InputScreen> {
       if (cachedSiswa != null) {
         setState(() {
           _siswaList = (cachedSiswa as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+          _siswaList.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
         });
       }
     }
   }
   
+  Map<String, dynamic>? _getHoliday(DateTime date, int? unitId) {
+    if (unitId == null) return null;
+    final dateStr = date.toIso8601String().split('T').first;
+    for (var h in _holidayList) {
+      if (h['tanggal'] == dateStr && (h['unit_id'] == unitId || h['unit_id'] == null)) {
+        return h;
+      }
+    }
+    return null;
+  }
+  
   void _showDatePicker() async {
+    if (_selectedUnitId == null) {
+      _showError('Pilih Unit Pendidikan terlebih dahulu');
+      return;
+    }
+    
     final now = DateTime.now();
     DateTime tempFocusedDay = DateTime.now();
     List<DateTime> tempSelected = List.from(_selectedDates);
@@ -234,6 +277,17 @@ class _InputScreenState extends State<InputScreen> {
                     return tempSelected.any((d) => isSameDay(d, day));
                   },
                   onDaySelected: (selected, focused) {
+                    final holiday = _getHoliday(selected, _selectedUnitId);
+                    if (holiday != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Libur: ${holiday['name']}'),
+                          backgroundColor: Colors.orange,
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                      return;
+                    }
                     setStateSheet(() {
                       final index = tempSelected.indexWhere((d) => isSameDay(d, selected));
                       if (index != -1) {
@@ -302,6 +356,11 @@ class _InputScreenState extends State<InputScreen> {
     List<DateTime> dates,
     String status,
     String? reason,
+    int? unitId,
+    int? kelasId,
+    String? userName,
+    String? unitName,
+    String? className,
   ) async {
     final List<dynamic> offlineEntries = List.from(CacheService.getData('offline_absensi') ?? []);
     
@@ -314,6 +373,12 @@ class _InputScreenState extends State<InputScreen> {
         'izin_reason': reason,
         'recorded_by': SupabaseService.currentUserId,
         'synced': false,
+        'unit_id': unitId,
+        'kelas_id': kelasId,
+        'user_name': userName ?? 'User ID $userId',
+        'unit_name': unitName ?? 'Unit',
+        'class_name': className ?? '-',
+        'created_at': DateTime.now().toIso8601String(),
       });
     }
     
@@ -337,6 +402,14 @@ class _InputScreenState extends State<InputScreen> {
     if (_selectedDates.isEmpty) {
       _showError('Pilih minimal 1 tanggal');
       return;
+    }
+    
+    for (var date in _selectedDates) {
+      final holiday = _getHoliday(date, _selectedUnitId);
+      if (holiday != null) {
+        _showError('Libur: Tanggal ${date.day}/${date.month}/${date.year} adalah hari libur (${holiday['name']})');
+        return;
+      }
     }
     
     String? izinReason;
@@ -375,6 +448,22 @@ class _InputScreenState extends State<InputScreen> {
     
     setState(() => _isLoading = true);
     
+    String? userName;
+    if (_selectedUserType == 'guru') {
+      final guru = _guruList.firstWhere((g) => g['id'] == _selectedUserId, orElse: () => {});
+      userName = guru['name'] as String?;
+    } else {
+      final siswa = _siswaList.firstWhere((s) => s['id'] == _selectedUserId, orElse: () => {});
+      userName = siswa['name'] as String?;
+    }
+    
+    String? unitName = (_selectedUnitId != null && _unitList.any((u) => u.id == _selectedUnitId))
+        ? _unitList.firstWhere((u) => u.id == _selectedUnitId).name 
+        : null;
+    String? className = (_selectedKelasId != null && _kelasList.any((k) => k.id == _selectedKelasId))
+        ? _kelasList.firstWhere((k) => k.id == _selectedKelasId).name 
+        : null;
+    
     // If offline, save to cache
     if (_isOffline) {
       await _saveToOfflineCache(
@@ -383,6 +472,11 @@ class _InputScreenState extends State<InputScreen> {
         _selectedDates,
         status,
         izinReason,
+        _selectedUnitId,
+        _selectedKelasId,
+        userName,
+        unitName,
+        className,
       );
       setState(() => _isLoading = false);
       _showSuccess('Disimpan secara offline. Akan tersinkronisasi saat online.');
@@ -401,6 +495,11 @@ class _InputScreenState extends State<InputScreen> {
       status: status,
       izinReason: izinReason,
       recordedBy: SupabaseService.currentUserId!,
+      unitId: _selectedUnitId,
+      kelasId: _selectedKelasId,
+      userName: userName,
+      unitName: unitName,
+      className: className,
     );
     
     setState(() => _isLoading = false);

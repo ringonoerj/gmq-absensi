@@ -188,6 +188,7 @@ class _ManageUnitScreenState extends State<ManageUnitScreen> {
                     ),
                   )
                 : ListView.builder(
+                    padding: const EdgeInsets.only(bottom: 80),
                     itemCount: provider.data.length,
                     itemBuilder: (context, index) {
                       final unit = provider.data[index];

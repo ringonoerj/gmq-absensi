@@ -60,6 +60,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
           .from('unit_pendidikan')
           .select();
       _unitList = (response as List).map((j) => UnitModel.fromJson(j as Map<String, dynamic>)).toList();
+      _unitList.sort((a, b) => a.name.compareTo(b.name));
       setState(() {});
     } catch (e) {
       print('Error loading units: $e');
@@ -494,6 +495,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                 ),
               )
             : ListView.builder(
+                padding: const EdgeInsets.only(bottom: 80),
                 itemCount: _usersList.length,
                 itemBuilder: (context, index) {
                   final user = _usersList[index];

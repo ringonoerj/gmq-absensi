@@ -425,7 +425,7 @@ class _HomeOperatorScreenState extends State<HomeOperatorScreen> {
     // Load kelas list
     List<Map<String, dynamic>> kelasWithStats = [];
     try {
-      final kelasResponse = await SupabaseService.client.from('kelas').select();
+      final kelasResponse = await SupabaseService.client.from('kelas').select().order('name');
       
       for (var kelas in kelasResponse) {
         final siswaInKelas = await SupabaseService.client
