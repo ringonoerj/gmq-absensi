@@ -45,6 +45,20 @@ A cross-platform Flutter application for educational/school attendance tracking,
    flutter run
    ```
 
+### Building for Android
+
+To build a release APK for Android:
+1. Navigate to the app directory:
+   ```bash
+   cd gmq_absensi
+   ```
+2. Run the build command:
+   ```bash
+   flutter build apk --release
+   ```
+The generated APK will be located at: `gmq_absensi/build/app/outputs/flutter-apk/app-release.apk`
+
+
 ## Development & Deployment Rules
 
 1. **Local Verification & Testing**: Always update the local codebase, compile, and test features thoroughly on your local machine before pushing.
