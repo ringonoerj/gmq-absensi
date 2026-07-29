@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "gmq-absensi"
-  }
+  },
+  "targets": {
+    "gmq-absensi": {
+      "hosting": {
+        "superapp": [
+          "gmq-super-app"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

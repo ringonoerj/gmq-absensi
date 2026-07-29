@@ -39,4 +39,5 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_GMQ_ABSENSI }}'
           channelId: live
           projectId: gmq-absensi
+          target: superapp
           entryPoint: gmq_absensi
