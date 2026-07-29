@@ -20,5 +20,5 @@ CREATE TABLE IF NOT EXISTS public.app_settings (
 
 -- Seed banner setting if not already present
 INSERT INTO public.app_settings (key, value)
-VALUES ('dashboard_banner', 'Selamat datang di Aplikasi GMQ Absensi V2!')
+VALUES ('dashboard_banner', 'Selamat datang di GMQ Super App!')
 ON CONFLICT (key) DO NOTHING;
