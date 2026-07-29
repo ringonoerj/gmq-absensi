@@ -1,4 +1,730 @@
 {
-  "message": "Secret API key required",
-  "hint": "Only secret API keys can be used for this endpoint."
+  "absensi": {
+    "columns": [
+      {
+        "column_name": "id",
+        "data_type": "integer",
+        "is_nullable": "NO",
+        "column_default": "nextval('absensi_id_seq'::regclass)"
+      },
+      {
+        "column_name": "user_type",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "user_id",
+        "data_type": "integer",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "column_name": "date",
+        "data_type": "date",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "column_name": "status",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "izin_reason",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "recorded_by",
+        "data_type": "uuid",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "is_nullable": "YES",
+        "column_default": "now()"
+      },
+      {
+        "column_name": "unit_id",
+        "data_type": "integer",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "kelas_id",
+        "data_type": "integer",
+        "is_nullable": "YES",
+        "column_default": null
+      }
+    ],
+    "foreignKeys": [
+      {
+        "local_column": "kelas_id",
+        "foreign_table": "kelas",
+        "foreign_column": "id"
+      },
+      {
+        "local_column": "recorded_by",
+        "foreign_table": "users",
+        "foreign_column": "id"
+      },
+      {
+        "local_column": "unit_id",
+        "foreign_table": "unit_pendidikan",
+        "foreign_column": "id"
+      }
+    ],
+    "indexes": [
+      {
+        "indexname": "absensi_pkey",
+        "indexdef": "CREATE UNIQUE INDEX absensi_pkey ON public.absensi USING btree (id)"
+      },
+      {
+        "indexname": "absensi_user_type_user_id_date_unit_kelas_key",
+        "indexdef": "CREATE UNIQUE INDEX absensi_user_type_user_id_date_unit_kelas_key ON public.absensi USING btree (user_type, user_id, date, unit_id, kelas_id)"
+      }
+    ]
+  },
+  "app_settings": {
+    "columns": [
+      {
+        "column_name": "key",
+        "data_type": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "column_name": "value",
+        "data_type": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "column_name": "updated_at",
+        "data_type": "timestamp with time zone",
+        "is_nullable": "YES",
+        "column_default": "now()"
+      }
+    ],
+    "foreignKeys": [],
+    "indexes": [
+      {
+        "indexname": "app_settings_pkey",
+        "indexdef": "CREATE UNIQUE INDEX app_settings_pkey ON public.app_settings USING btree (key)"
+      }
+    ]
+  },
+  "backup_logs": {
+    "columns": [
+      {
+        "column_name": "id",
+        "data_type": "integer",
+        "is_nullable": "NO",
+        "column_default": "nextval('backup_logs_id_seq'::regclass)"
+      },
+      {
+        "column_name": "action",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "filename",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "performed_by",
+        "data_type": "uuid",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "is_nullable": "YES",
+        "column_default": "now()"
+      }
+    ],
+    "foreignKeys": [
+      {
+        "local_column": "performed_by",
+        "foreign_table": "users",
+        "foreign_column": "id"
+      }
+    ],
+    "indexes": [
+      {
+        "indexname": "backup_logs_pkey",
+        "indexdef": "CREATE UNIQUE INDEX backup_logs_pkey ON public.backup_logs USING btree (id)"
+      }
+    ]
+  },
+  "guru": {
+    "columns": [
+      {
+        "column_name": "id",
+        "data_type": "integer",
+        "is_nullable": "NO",
+        "column_default": "nextval('guru_id_seq'::regclass)"
+      },
+      {
+        "column_name": "nip",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "name",
+        "data_type": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "column_name": "email",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "no_telp",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "unit_id",
+        "data_type": "integer",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "kategori_id",
+        "data_type": "integer",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "is_nullable": "YES",
+        "column_default": "now()"
+      },
+      {
+        "column_name": "unit_ids",
+        "data_type": "ARRAY",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "kelas_ids",
+        "data_type": "ARRAY",
+        "is_nullable": "YES",
+        "column_default": null
+      }
+    ],
+    "foreignKeys": [
+      {
+        "local_column": "kategori_id",
+        "foreign_table": "kategori",
+        "foreign_column": "id"
+      },
+      {
+        "local_column": "unit_id",
+        "foreign_table": "unit_pendidikan",
+        "foreign_column": "id"
+      }
+    ],
+    "indexes": [
+      {
+        "indexname": "guru_pkey",
+        "indexdef": "CREATE UNIQUE INDEX guru_pkey ON public.guru USING btree (id)"
+      },
+      {
+        "indexname": "guru_nip_key",
+        "indexdef": "CREATE UNIQUE INDEX guru_nip_key ON public.guru USING btree (nip)"
+      },
+      {
+        "indexname": "idx_guru_unit_ids",
+        "indexdef": "CREATE INDEX idx_guru_unit_ids ON public.guru USING gin (unit_ids)"
+      },
+      {
+        "indexname": "idx_guru_kelas_ids",
+        "indexdef": "CREATE INDEX idx_guru_kelas_ids ON public.guru USING gin (kelas_ids)"
+      }
+    ]
+  },
+  "insentif_guru": {
+    "columns": [
+      {
+        "column_name": "id",
+        "data_type": "integer",
+        "is_nullable": "NO",
+        "column_default": "nextval('insentif_guru_id_seq'::regclass)"
+      },
+      {
+        "column_name": "guru_id",
+        "data_type": "integer",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "unit_id",
+        "data_type": "integer",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "nominal",
+        "data_type": "integer",
+        "is_nullable": "YES",
+        "column_default": "0"
+      },
+      {
+        "column_name": "created_at",
+        "data_type": "timestamp with time zone",
+        "is_nullable": "YES",
+        "column_default": "now()"
+      }
+    ],
+    "foreignKeys": [
+      {
+        "local_column": "guru_id",
+        "foreign_table": "guru",
+        "foreign_column": "id"
+      },
+      {
+        "local_column": "unit_id",
+        "foreign_table": "unit_pendidikan",
+        "foreign_column": "id"
+      }
+    ],
+    "indexes": [
+      {
+        "indexname": "insentif_guru_pkey",
+        "indexdef": "CREATE UNIQUE INDEX insentif_guru_pkey ON public.insentif_guru USING btree (id)"
+      },
+      {
+        "indexname": "insentif_guru_guru_id_unit_id_key",
+        "indexdef": "CREATE UNIQUE INDEX insentif_guru_guru_id_unit_id_key ON public.insentif_guru USING btree (guru_id, unit_id)"
+      }
+    ]
+  },
+  "kategori": {
+    "columns": [
+      {
+        "column_name": "id",
+        "data_type": "integer",
+        "is_nullable": "NO",
+        "column_default": "nextval('kategori_id_seq'::regclass)"
+      },
+      {
+        "column_name": "name",
+        "data_type": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "column_name": "tipe",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "is_nullable": "YES",
+        "column_default": "now()"
+      }
+    ],
+    "foreignKeys": [],
+    "indexes": [
+      {
+        "indexname": "kategori_pkey",
+        "indexdef": "CREATE UNIQUE INDEX kategori_pkey ON public.kategori USING btree (id)"
+      },
+      {
+        "indexname": "kategori_name_key",
+        "indexdef": "CREATE UNIQUE INDEX kategori_name_key ON public.kategori USING btree (name)"
+      }
+    ]
+  },
+  "kelas": {
+    "columns": [
+      {
+        "column_name": "id",
+        "data_type": "integer",
+        "is_nullable": "NO",
+        "column_default": "nextval('kelas_id_seq'::regclass)"
+      },
+      {
+        "column_name": "name",
+        "data_type": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "column_name": "unit_id",
+        "data_type": "integer",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "tingkat",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "jurusan",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "is_nullable": "YES",
+        "column_default": "now()"
+      }
+    ],
+    "foreignKeys": [
+      {
+        "local_column": "unit_id",
+        "foreign_table": "unit_pendidikan",
+        "foreign_column": "id"
+      }
+    ],
+    "indexes": [
+      {
+        "indexname": "kelas_pkey",
+        "indexdef": "CREATE UNIQUE INDEX kelas_pkey ON public.kelas USING btree (id)"
+      },
+      {
+        "indexname": "kelas_name_unit_id_key",
+        "indexdef": "CREATE UNIQUE INDEX kelas_name_unit_id_key ON public.kelas USING btree (name, unit_id)"
+      }
+    ]
+  },
+  "libur_nasional": {
+    "columns": [
+      {
+        "column_name": "id",
+        "data_type": "integer",
+        "is_nullable": "NO",
+        "column_default": "nextval('libur_nasional_id_seq'::regclass)"
+      },
+      {
+        "column_name": "name",
+        "data_type": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "column_name": "tanggal",
+        "data_type": "date",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "column_name": "keterangan",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "unit_id",
+        "data_type": "integer",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "is_nullable": "YES",
+        "column_default": "now()"
+      }
+    ],
+    "foreignKeys": [
+      {
+        "local_column": "unit_id",
+        "foreign_table": "unit_pendidikan",
+        "foreign_column": "id"
+      }
+    ],
+    "indexes": [
+      {
+        "indexname": "libur_nasional_pkey",
+        "indexdef": "CREATE UNIQUE INDEX libur_nasional_pkey ON public.libur_nasional USING btree (id)"
+      },
+      {
+        "indexname": "libur_nasional_tanggal_unit_id_key",
+        "indexdef": "CREATE UNIQUE INDEX libur_nasional_tanggal_unit_id_key ON public.libur_nasional USING btree (tanggal, unit_id)"
+      }
+    ]
+  },
+  "siswa": {
+    "columns": [
+      {
+        "column_name": "id",
+        "data_type": "integer",
+        "is_nullable": "NO",
+        "column_default": "nextval('siswa_id_seq'::regclass)"
+      },
+      {
+        "column_name": "nis",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "name",
+        "data_type": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "column_name": "email",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "no_telp",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "unit_id",
+        "data_type": "integer",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "kelas_id",
+        "data_type": "integer",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "kategori_id",
+        "data_type": "integer",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "is_nullable": "YES",
+        "column_default": "now()"
+      },
+      {
+        "column_name": "nama_wali",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      }
+    ],
+    "foreignKeys": [
+      {
+        "local_column": "kategori_id",
+        "foreign_table": "kategori",
+        "foreign_column": "id"
+      },
+      {
+        "local_column": "kelas_id",
+        "foreign_table": "kelas",
+        "foreign_column": "id"
+      },
+      {
+        "local_column": "unit_id",
+        "foreign_table": "unit_pendidikan",
+        "foreign_column": "id"
+      }
+    ],
+    "indexes": [
+      {
+        "indexname": "siswa_pkey",
+        "indexdef": "CREATE UNIQUE INDEX siswa_pkey ON public.siswa USING btree (id)"
+      },
+      {
+        "indexname": "siswa_nis_key",
+        "indexdef": "CREATE UNIQUE INDEX siswa_nis_key ON public.siswa USING btree (nis)"
+      }
+    ]
+  },
+  "tahun_ajaran": {
+    "columns": [
+      {
+        "column_name": "id",
+        "data_type": "integer",
+        "is_nullable": "NO",
+        "column_default": "nextval('tahun_ajaran_id_seq'::regclass)"
+      },
+      {
+        "column_name": "name",
+        "data_type": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "column_name": "is_active",
+        "data_type": "boolean",
+        "is_nullable": "YES",
+        "column_default": "false"
+      },
+      {
+        "column_name": "tanggal_mulai",
+        "data_type": "date",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "tanggal_selesai",
+        "data_type": "date",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "is_nullable": "YES",
+        "column_default": "now()"
+      }
+    ],
+    "foreignKeys": [],
+    "indexes": [
+      {
+        "indexname": "tahun_ajaran_pkey",
+        "indexdef": "CREATE UNIQUE INDEX tahun_ajaran_pkey ON public.tahun_ajaran USING btree (id)"
+      }
+    ]
+  },
+  "unit_pendidikan": {
+    "columns": [
+      {
+        "column_name": "id",
+        "data_type": "integer",
+        "is_nullable": "NO",
+        "column_default": "nextval('unit_pendidikan_id_seq'::regclass)"
+      },
+      {
+        "column_name": "name",
+        "data_type": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "column_name": "alamat",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "kontak",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "logo_url",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "is_nullable": "YES",
+        "column_default": "now()"
+      }
+    ],
+    "foreignKeys": [],
+    "indexes": [
+      {
+        "indexname": "unit_pendidikan_name_key",
+        "indexdef": "CREATE UNIQUE INDEX unit_pendidikan_name_key ON public.unit_pendidikan USING btree (name)"
+      },
+      {
+        "indexname": "unit_pendidikan_pkey",
+        "indexdef": "CREATE UNIQUE INDEX unit_pendidikan_pkey ON public.unit_pendidikan USING btree (id)"
+      }
+    ]
+  },
+  "users": {
+    "columns": [
+      {
+        "column_name": "id",
+        "data_type": "uuid",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "column_name": "email",
+        "data_type": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "column_name": "name",
+        "data_type": "text",
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "column_name": "role",
+        "data_type": "text",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "unit_id",
+        "data_type": "integer",
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "column_name": "is_active",
+        "data_type": "boolean",
+        "is_nullable": "YES",
+        "column_default": "true"
+      },
+      {
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "is_nullable": "YES",
+        "column_default": "now()"
+      },
+      {
+        "column_name": "updated_at",
+        "data_type": "timestamp without time zone",
+        "is_nullable": "YES",
+        "column_default": "now()"
+      }
+    ],
+    "foreignKeys": [
+      {
+        "local_column": "unit_id",
+        "foreign_table": "unit_pendidikan",
+        "foreign_column": "id"
+      }
+    ],
+    "indexes": [
+      {
+        "indexname": "users_pkey",
+        "indexdef": "CREATE UNIQUE INDEX users_pkey ON public.users USING btree (id)"
+      },
+      {
+        "indexname": "users_email_key",
+        "indexdef": "CREATE UNIQUE INDEX users_email_key ON public.users USING btree (email)"
+      }
+    ]
+  }
 }

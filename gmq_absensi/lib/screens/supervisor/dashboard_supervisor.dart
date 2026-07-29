@@ -201,7 +201,7 @@ class _DashboardSupervisorState extends State<DashboardSupervisor> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   const Text(
-                    'GMQ ABSENSI',
+                    'GMQ SUPER APP',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,

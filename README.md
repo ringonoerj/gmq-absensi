@@ -91,6 +91,36 @@ Repositori ini menyediakan 14 file diagram `.drawio` yang mendokumentasikan seti
 
 ---
 
+## 🗄️ Skema Database Supabase
+
+Berikut adalah daftar tabel utama dan kolom penting dalam database Supabase (`public` schema) proyek GMQ Absensi V2:
+
+### **1. Tabel Master Data**
+
+| Nama Tabel | Deskripsi | Kolom Utama / Penting |
+| :--- | :--- | :--- |
+| `users` | Akun pengguna sistem (Admin/Operator) | `id` (UUID, PK), `email` (Text, Unique), `name` (Text), `role` (Text), `unit_id` (FK), `is_active` (Boolean) |
+| `unit_pendidikan` | Data cabang/unit sekolah | `id` (Serial, PK), `name` (Text, Unique), `alamat` (Text), `kontak` (Text), `logo_url` (Text) |
+| `kelas` | Data kelas di masing-masing unit | `id` (Serial, PK), `name` (Text), `unit_id` (FK), `tingkat` (Text), `jurusan` (Text) |
+| `siswa` | Data profil siswa sekolah | `id` (Serial, PK), `nis` (Text, Unique), `name` (Text), `email` (Text), `no_telp` (Text), `unit_id` (FK), `kelas_id` (FK), `kategori_id` (FK), `nama_wali` (Text) |
+| `guru` | Data profil guru sekolah | `id` (Serial, PK), `nip` (Text, Unique), `name` (Text), `email` (Text), `no_telp` (Text), `unit_id` (FK), `kategori_id` (FK), `unit_ids` (ARRAY / GIN index), `kelas_ids` (ARRAY / GIN index) |
+
+### **2. Tabel Operasional & Transaksi**
+
+| Nama Tabel | Deskripsi | Kolom Utama / Penting |
+| :--- | :--- | :--- |
+| `absensi` | Catatan kehadiran harian guru/siswa | `id` (Serial, PK), `user_type` (Text: 'siswa'/'guru'), `user_id` (Int), `date` (Date), `status` (Text: H/I/S/A/L), `izin_reason` (Text), `recorded_by` (UUID, FK), `unit_id` (Int, FK), `kelas_id` (Int, FK) |
+| `insentif_guru` | Tarif insentif harian guru per unit | `id` (Serial, PK), `guru_id` (Int, FK), `unit_id` (Int, FK), `nominal` (Int), `UNIQUE(guru_id, unit_id)` |
+| `libur_nasional` | Kalender libur nasional / sekolah | `id` (Serial, PK), `name` (Text), `tanggal` (Date), `keterangan` (Text), `unit_id` (FK), `UNIQUE(tanggal, unit_id)` |
+| `kategori` | Kategori penanda jenis guru/siswa | `id` (Serial, PK), `name` (Text, Unique), `tipe` (Text) |
+| `tahun_ajaran` | Periode tahun ajaran sekolah | `id` (Serial, PK), `name` (Text), `is_active` (Boolean), `tanggal_mulai` (Date), `tanggal_selesai` (Date) |
+| `app_settings` | Setelan konfigurasi dinamis sistem | `key` (Text, PK), `value` (Text), `updated_at` (Timestamp) |
+| `backup_logs` | Catatan riwayat pencadangan data | `id` (Serial, PK), `action` (Text), `filename` (Text), `performed_by` (UUID, FK) |
+
+*Detail struktur teknis selengkapnya berformat JSON dapat diakses langsung pada berkas [`db_schema.json`](./db_schema.json) di root proyek.*
+
+---
+
 ## 🚀 Panduan Memulai
 
 ### **1. Prasyarat Sistem**
@@ -142,11 +172,16 @@ Sebelum menjalankan aplikasi, pastikan skema basis data di Supabase sudah siap.
 
 #### **Android (Release APK)**
 Untuk membuat file instalasi APK Android:
-```bash
-cd gmq_absensi
-flutter build apk --release
-```
-Hasil file `.apk` akan tersimpan di: `gmq_absensi/build/app/outputs/flutter-apk/app-release.apk`
+1. Konfigurasikan metadata rilis di `gmq_absensi/android/gradle.properties`:
+   ```properties
+   releaseMetadata=yyyymmdd_xx
+   ```
+2. Jalankan perintah kompilasi:
+   ```bash
+   cd gmq_absensi
+   flutter build apk --release
+   ```
+Hasil file `.apk` akan tersimpan di: `gmq_absensi/build/app/outputs/flutter-apk/gmq_super_app_[metadata].apk` (misal: `gmq_super_app_20260729_00.apk`).
 
 #### **Flutter Web (Pengujian Lokal)**
 
