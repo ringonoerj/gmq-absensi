@@ -52,7 +52,7 @@ class SplashScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               const Text(
-                'Sistem Absensi Pendidikan',
+                'Sistem Pendidikan Digital Yayasan Griya Mahir Al-Quran',
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.white70,
