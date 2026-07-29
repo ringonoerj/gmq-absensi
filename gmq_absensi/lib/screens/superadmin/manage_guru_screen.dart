@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/master_provider.dart';
+import '../../providers/auth_provider.dart';
 import '../../services/supabase_service.dart';
 import '../../models/unit_model.dart';
 import '../../models/kelas_model.dart';
+import '../../helpers/export_helper.dart';
 
 class ManageGuruScreen extends StatefulWidget {
   const ManageGuruScreen({super.key});
@@ -489,7 +491,47 @@ class _ManageGuruScreenState extends State<ManageGuruScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<MasterProvider>(context);
-    
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final isOperator = authProvider.currentUser?.role == 'operator';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    List<_GuruListItem> listItems = [];
+    if (!provider.isLoading && provider.data.isNotEmpty) {
+      for (var unit in _unitList) {
+        final unitGurus = provider.data.where((g) {
+          List<int> uIds = [];
+          if (g['unit_ids'] != null) {
+            uIds.addAll(List<int>.from(g['unit_ids']));
+          } else if (g['unit_id'] != null) {
+            uIds.add(g['unit_id'] as int);
+          }
+          return uIds.contains(unit.id);
+        }).toList();
+
+        if (unitGurus.isNotEmpty) {
+          listItems.add(_GuruListItem(unitName: unit.name, isHeader: true));
+          for (var g in unitGurus) {
+            listItems.add(_GuruListItem(guru: g));
+          }
+        }
+      }
+      final orphanGurus = provider.data.where((g) {
+        List<int> uIds = [];
+        if (g['unit_ids'] != null) {
+          uIds.addAll(List<int>.from(g['unit_ids']));
+        } else if (g['unit_id'] != null) {
+          uIds.add(g['unit_id'] as int);
+        }
+        return uIds.isEmpty || !uIds.any((id) => _unitList.any((u) => u.id == id));
+      }).toList();
+      if (orphanGurus.isNotEmpty) {
+        listItems.add(_GuruListItem(unitName: 'Tanpa Unit', isHeader: true));
+        for (var g in orphanGurus) {
+          listItems.add(_GuruListItem(guru: g));
+        }
+      }
+    }
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: _showForm,
@@ -511,121 +553,182 @@ class _ManageGuruScreenState extends State<ManageGuruScreen> {
                       ],
                     ),
                   )
-                : ListView.builder(
-                    padding: const EdgeInsets.only(bottom: 80),
-                    itemCount: provider.data.length,
-                    itemBuilder: (context, index) {
-                      final guru = provider.data[index];
-                      
-                      // Process unit names
-                      final List<int> uIds = [];
-                      if (guru['unit_ids'] != null) {
-                        uIds.addAll(List<int>.from(guru['unit_ids']));
-                      } else if (guru['unit_id'] != null) {
-                        uIds.add(guru['unit_id'] as int);
-                      }
-                      
-                      final unitNames = uIds.map((uid) {
-                        return _unitList.firstWhere(
-                          (u) => u.id == uid,
-                          orElse: () => UnitModel(id: 0, name: '-', createdAt: DateTime.now()),
-                        ).name;
-                      }).join(', ');
-
-                      // Process kelas names
-                      final List<int> kIds = [];
-                      if (guru['kelas_ids'] != null) {
-                        kIds.addAll(List<int>.from(guru['kelas_ids']));
-                      }
-                      
-                      final kelasNames = kIds.isNotEmpty
-                          ? kIds.map((kid) {
-                              return _allKelasList.firstWhere(
-                                (c) => c.id == kid,
-                                orElse: () => KelasModel(id: 0, name: '-', unitId: 0, createdAt: DateTime.now()),
-                              ).name;
-                            }).join(', ')
-                          : '-';
-                      
-                      return Card(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.orange.shade100,
-                            child: const Icon(
-                              Icons.person,
-                              color: Colors.orange,
+                : Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        color: isDark ? Colors.grey.shade900 : Colors.teal.shade50,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Total: ${provider.data.length} Guru',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
-                          ),
-                          title: Text(
-                            guru['name'],
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Unit: $unitNames'),
-                              Text('Kelas: $kelasNames'),
-                              if (guru['nip'] != null) Text('NIP: ${guru['nip']}'),
-                              if (guru['email'] != null) Text('Email: ${guru['email']}'),
-                            ],
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit, color: Colors.blue),
-                                onPressed: () => _showForm(guru: guru),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                ExportHelper().exportGuru(
+                                  context,
+                                  data: provider.data,
+                                  unitList: _unitList,
+                                  kelasList: _allKelasList,
+                                );
+                              },
+                              icon: const Icon(Icons.download, size: 16),
+                              label: const Text('Ekspor Guru'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.teal,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
-                                onPressed: () async {
-                                  final confirm = await showDialog<bool>(
-                                    context: context,
-                                    builder: (_) => AlertDialog(
-                                      title: const Text('Hapus Guru'),
-                                      content: Text(
-                                        'Yakin hapus ${guru['name']}?\n\nData absensi guru ini akan ikut terhapus.',
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () => Navigator.pop(_, false),
-                                          child: const Text('Batal'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () => Navigator.pop(_, true),
-                                          child: const Text('Hapus'),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                  if (confirm == true) {
-                                    final success = await provider.deleteData(
-                                      'guru',
-                                      guru['id'],
-                                    );
-                                    if (success && mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Guru dihapus'),
-                                          backgroundColor: Colors.green,
-                                        ),
-                                      );
-                                      _loadData();
-                                    }
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      );
-                    },
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          padding: const EdgeInsets.only(bottom: 80),
+                          itemCount: listItems.length,
+                          itemBuilder: (context, index) {
+                            final item = listItems[index];
+                            if (item.isHeader) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                color: isDark ? Colors.grey.shade800 : Colors.teal.shade100.withOpacity(0.4),
+                                width: double.infinity,
+                                child: Text(
+                                  item.unitName!,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: isDark ? Colors.teal.shade300 : Colors.teal.shade800,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              );
+                            }
+
+                            final guru = item.guru!;
+
+                            // Process unit names
+                            final List<int> uIds = [];
+                            if (guru['unit_ids'] != null) {
+                              uIds.addAll(List<int>.from(guru['unit_ids']));
+                            } else if (guru['unit_id'] != null) {
+                              uIds.add(guru['unit_id'] as int);
+                            }
+
+                            final unitNames = uIds.map((uid) {
+                              return _unitList.firstWhere(
+                                (u) => u.id == uid,
+                                orElse: () => UnitModel(id: 0, name: '-', createdAt: DateTime.now()),
+                              ).name;
+                            }).join(', ');
+
+                            // Process kelas names
+                            final List<int> kIds = [];
+                            if (guru['kelas_ids'] != null) {
+                              kIds.addAll(List<int>.from(guru['kelas_ids']));
+                            }
+
+                            final kelasNames = kIds.isNotEmpty
+                                ? kIds.map((kid) {
+                                    return _allKelasList.firstWhere(
+                                      (c) => c.id == kid,
+                                      orElse: () => KelasModel(id: 0, name: '-', unitId: 0, createdAt: DateTime.now()),
+                                    ).name;
+                                  }).join(', ')
+                                : '-';
+
+                            return Card(
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor: Colors.orange.shade100,
+                                  child: const Icon(
+                                    Icons.person,
+                                    color: Colors.orange,
+                                  ),
+                                ),
+                                title: Text(
+                                  guru['name'],
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Unit: $unitNames'),
+                                    Text('Kelas: $kelasNames'),
+                                    if (guru['nip'] != null) Text('NIP: ${guru['nip']}'),
+                                    if (guru['email'] != null) Text('Email: ${guru['email']}'),
+                                  ],
+                                ),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.edit, color: Colors.blue),
+                                      onPressed: () => _showForm(guru: guru),
+                                    ),
+                                    if (!isOperator)
+                                      IconButton(
+                                        icon: const Icon(Icons.delete, color: Colors.red),
+                                        onPressed: () async {
+                                          final confirm = await showDialog<bool>(
+                                            context: context,
+                                            builder: (_) => AlertDialog(
+                                              title: const Text('Hapus Guru'),
+                                              content: Text(
+                                                'Yakin hapus ${guru['name']}?\n\nData absensi guru ini akan ikut terhapus.',
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () => Navigator.pop(_, false),
+                                                  child: const Text('Batal'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () => Navigator.pop(_, true),
+                                                  child: const Text('Hapus'),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                          if (confirm == true) {
+                                            final success = await provider.deleteData(
+                                              'guru',
+                                              guru['id'],
+                                            );
+                                            if (success && mounted) {
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text('Guru dihapus'),
+                                                  backgroundColor: Colors.green,
+                                                ),
+                                              );
+                                              _loadData();
+                                            }
+                                          }
+                                        },
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
       ),
     );
   }
+}
+
+class _GuruListItem {
+  final String? unitName;
+  final Map<String, dynamic>? guru;
+  final bool isHeader;
+  _GuruListItem({this.unitName, this.guru, this.isHeader = false});
 }
