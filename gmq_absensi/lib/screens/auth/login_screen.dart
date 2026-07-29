@@ -168,15 +168,33 @@ class _LoginScreenState extends State<LoginScreen> {
                             const SizedBox(height: 8),
                             Row(
                               children: [
-                                Checkbox(
-                                  value: _rememberMe,
-                                  onChanged: (value) {
+                                InkWell(
+                                  onTap: () {
                                     setState(() {
-                                      _rememberMe = value ?? false;
+                                      _rememberMe = !_rememberMe;
                                     });
                                   },
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Checkbox(
+                                          value: _rememberMe,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _rememberMe = value ?? false;
+                                            });
+                                          },
+                                          activeColor: Colors.teal,
+                                        ),
+                                        const Text('Ingat Saya'),
+                                        const SizedBox(width: 8),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                                const Text('Ingat Saya'),
                                 const Spacer(),
                                 TextButton(
                                   onPressed: () {

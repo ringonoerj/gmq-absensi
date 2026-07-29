@@ -13,6 +13,10 @@ import '../shared/input_screen.dart';
 import '../shared/laporan_screen_mobile.dart';
 import '../shared/laporan_insentif_screen.dart';
 import '../superadmin/pengaturan_akun_screen.dart';
+import '../superadmin/manage_unit_screen.dart';
+import '../superadmin/manage_kelas_screen.dart';
+import '../superadmin/manage_guru_screen.dart';
+import '../superadmin/manage_siswa_screen.dart';
 
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -101,6 +105,10 @@ class _DashboardOperatorState extends State<DashboardOperator> {
     const LaporanScreenMobile(), // 2
     const LaporanInsentifGuruScreen(), // 3
     const PengaturanAkunScreen(), // 4
+    const ManageUnitScreen(), // 5
+    const ManageKelasScreen(), // 6
+    const ManageGuruScreen(), // 7
+    const ManageSiswaScreen(), // 8
   ];
   
   final List<String> _titles = [
@@ -109,6 +117,10 @@ class _DashboardOperatorState extends State<DashboardOperator> {
     'Laporan Absensi',
     'Laporan Insentif Guru',
     'Pengaturan Akun',
+    'Unit Pendidikan',
+    'Kelas',
+    'Guru',
+    'Siswa',
   ];
   
   @override
@@ -324,6 +336,63 @@ class _DashboardOperatorState extends State<DashboardOperator> {
                 _checkConnectivity();
                 Navigator.pop(context);
               },
+            ),
+            
+            // Data Master Parent (Unit, Kelas, Guru, Siswa)
+            ExpansionTile(
+              leading: const Icon(Icons.folder_shared),
+              title: const Text('Data Master'),
+              initiallyExpanded: _selectedIndex >= 5 && _selectedIndex <= 8,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.business),
+                  title: const Text('Unit Pendidikan'),
+                  selected: _selectedIndex == 5,
+                  contentPadding: const EdgeInsets.only(left: 32),
+                  onTap: () {
+                    setState(() => _selectedIndex = 5);
+                    _checkOfflineData();
+                    _checkConnectivity();
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.class_),
+                  title: const Text('Kelas'),
+                  selected: _selectedIndex == 6,
+                  contentPadding: const EdgeInsets.only(left: 32),
+                  onTap: () {
+                    setState(() => _selectedIndex = 6);
+                    _checkOfflineData();
+                    _checkConnectivity();
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.person),
+                  title: const Text('Guru'),
+                  selected: _selectedIndex == 7,
+                  contentPadding: const EdgeInsets.only(left: 32),
+                  onTap: () {
+                    setState(() => _selectedIndex = 7);
+                    _checkOfflineData();
+                    _checkConnectivity();
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.people),
+                  title: const Text('Siswa'),
+                  selected: _selectedIndex == 8,
+                  contentPadding: const EdgeInsets.only(left: 32),
+                  onTap: () {
+                    setState(() => _selectedIndex = 8);
+                    _checkOfflineData();
+                    _checkConnectivity();
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
             ),
             
             // Laporan Parent

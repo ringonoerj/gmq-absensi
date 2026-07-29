@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/supabase_service.dart';
 import '../../models/unit_model.dart';
+import '../../helpers/export_helper.dart';
 
 class ManageUsersScreen extends StatefulWidget {
   const ManageUsersScreen({super.key});
@@ -475,6 +476,28 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    List<_UserListItem> listItems = [];
+    if (_usersList.isNotEmpty) {
+      for (var role in _roles) {
+        final roleUsers = _usersList.where((u) => u['role'] == role['value']).toList();
+        if (roleUsers.isNotEmpty) {
+          listItems.add(_UserListItem(roleName: role['label'] as String, isHeader: true));
+          for (var u in roleUsers) {
+            listItems.add(_UserListItem(user: u));
+          }
+        }
+      }
+      final orphanUsers = _usersList.where((u) => !_roles.any((r) => r['value'] == u['role'])).toList();
+      if (orphanUsers.isNotEmpty) {
+        listItems.add(_UserListItem(roleName: 'Lainnya', isHeader: true));
+        for (var u in orphanUsers) {
+          listItems.add(_UserListItem(user: u));
+        }
+      }
+    }
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: _showForm,
@@ -494,111 +517,170 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   ],
                 ),
               )
-            : ListView.builder(
-                padding: const EdgeInsets.only(bottom: 80),
-                itemCount: _usersList.length,
-                itemBuilder: (context, index) {
-                  final user = _usersList[index];
-                  final role = _roles.firstWhere(
-                    (r) => r['value'] == user['role'],
-                    orElse: () => {'label': user['role'], 'color': Colors.grey},
-                  );
-                  final unit = _unitList.firstWhere(
-                    (u) => u.id == user['unit_id'],
-                    orElse: () => UnitModel(
-                      id: 0,
-                      name: 'Semua Unit',
-                      createdAt: DateTime.now(),
-                    ),
-                  );
-                  
-                  return Card(
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: (role['color'] as Color).withOpacity(0.2),
-                        child: Icon(
-                          Icons.person,
-                          color: role['color'],
+            : Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    color: isDark ? Colors.grey.shade900 : Colors.teal.shade50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Total: ${_usersList.length} User',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
-                      ),
-                      title: Text(
-                        user['name'],
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Email: ${user['email']}'),
-                          Text('Role: ${role['label']} | Unit: ${unit.name}'),
-                          Text(
-                            user['is_active'] ? 'Aktif' : 'Tidak Aktif',
-                            style: TextStyle(
-                              color: user['is_active'] ? Colors.green : Colors.red,
-                            ),
-                          ),
-                        ],
-                      ),
-                      trailing: PopupMenuButton<String>(
-                        icon: const Icon(Icons.more_vert),
-                        onSelected: (value) {
-                          if (value == 'password') {
-                            _adminChangePasswordDialog(user['id'], user['email']);
-                          } else if (value == 'status') {
-                            _toggleUserStatus(user['id'], user['is_active']);
-                          } else if (value == 'edit') {
-                            _showForm(user: user);
-                          } else if (value == 'delete') {
-                            _confirmDeleteUser(user['id'], user['email']);
-                          }
-                        },
-                        itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                          const PopupMenuItem<String>(
-                            value: 'password',
-                            child: ListTile(
-                              leading: Icon(Icons.password, color: Colors.orange),
-                              title: Text('Ganti Password'),
-                              contentPadding: EdgeInsets.zero,
-                            ),
-                          ),
-                          PopupMenuItem<String>(
-                            value: 'status',
-                            child: ListTile(
-                              leading: Icon(
-                                user['is_active'] ? Icons.block : Icons.check_circle,
-                                color: user['is_active'] ? Colors.red : Colors.green,
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            ExportHelper().exportUser(
+                              context,
+                              data: _usersList,
+                              unitList: _unitList,
+                            );
+                          },
+                          icon: const Icon(Icons.download, size: 16),
+                          label: const Text('Ekspor User'),
+                          style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.teal,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                               ),
-                              title: Text(user['is_active'] ? 'Nonaktifkan' : 'Aktifkan'),
-                              contentPadding: EdgeInsets.zero,
-                            ),
-                          ),
-                          const PopupMenuItem<String>(
-                            value: 'edit',
-                            child: ListTile(
-                              leading: Icon(Icons.edit, color: Colors.blue),
-                              title: Text('Edit User'),
-                              contentPadding: EdgeInsets.zero,
-                            ),
-                          ),
-                          if (user['email'] != 'griyamahiralquran@gmail.com')
-                            const PopupMenuItem<String>(
-                              value: 'delete',
-                              child: ListTile(
-                                leading: Icon(Icons.delete, color: Colors.red),
-                                title: Text('Hapus User'),
-                                contentPadding: EdgeInsets.zero,
-                              ),
-                            ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  );
-                },
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.only(bottom: 80),
+                      itemCount: listItems.length,
+                      itemBuilder: (context, index) {
+                        final item = listItems[index];
+                        if (item.isHeader) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            color: isDark ? Colors.grey.shade800 : Colors.teal.shade100.withOpacity(0.4),
+                            width: double.infinity,
+                            child: Text(
+                              item.roleName!,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.teal.shade300 : Colors.teal.shade800,
+                                fontSize: 14,
+                              ),
+                            ),
+                          );
+                        }
+
+                        final user = item.user!;
+                        final role = _roles.firstWhere(
+                          (r) => r['value'] == user['role'],
+                          orElse: () => {'label': user['role'], 'color': Colors.grey},
+                        );
+                        final unit = _unitList.firstWhere(
+                          (u) => u.id == user['unit_id'],
+                          orElse: () => UnitModel(
+                            id: 0,
+                            name: 'Semua Unit',
+                            createdAt: DateTime.now(),
+                          ),
+                        );
+
+                        return Card(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: (role['color'] as Color).withOpacity(0.2),
+                              child: Icon(
+                                Icons.person,
+                                color: role['color'],
+                              ),
+                            ),
+                            title: Text(
+                              user['name'],
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Email: ${user['email']}'),
+                                Text('Unit: ${unit.name}'),
+                                Text(
+                                  user['is_active'] ? 'Aktif' : 'Tidak Aktif',
+                                  style: TextStyle(
+                                    color: user['is_active'] ? Colors.green : Colors.red,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            trailing: PopupMenuButton<String>(
+                              icon: const Icon(Icons.more_vert),
+                              onSelected: (value) {
+                                if (value == 'password') {
+                                  _adminChangePasswordDialog(user['id'], user['email']);
+                                } else if (value == 'status') {
+                                  _toggleUserStatus(user['id'], user['is_active']);
+                                } else if (value == 'edit') {
+                                  _showForm(user: user);
+                                } else if (value == 'delete') {
+                                  _confirmDeleteUser(user['id'], user['email']);
+                                }
+                              },
+                              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                                const PopupMenuItem<String>(
+                                  value: 'password',
+                                  child: ListTile(
+                                    leading: Icon(Icons.password, color: Colors.orange),
+                                    title: Text('Ganti Password'),
+                                    contentPadding: EdgeInsets.zero,
+                                  ),
+                                ),
+                                PopupMenuItem<String>(
+                                  value: 'status',
+                                  child: ListTile(
+                                    leading: Icon(
+                                      user['is_active'] ? Icons.block : Icons.check_circle,
+                                      color: user['is_active'] ? Colors.red : Colors.green,
+                                    ),
+                                    title: Text(user['is_active'] ? 'Nonaktifkan' : 'Aktifkan'),
+                                    contentPadding: EdgeInsets.zero,
+                                  ),
+                                ),
+                                const PopupMenuItem<String>(
+                                  value: 'edit',
+                                  child: ListTile(
+                                    leading: Icon(Icons.edit, color: Colors.blue),
+                                    title: Text('Edit User'),
+                                    contentPadding: EdgeInsets.zero,
+                                  ),
+                                ),
+                                if (user['email'] != 'griyamahiralquran@gmail.com')
+                                  const PopupMenuItem<String>(
+                                    value: 'delete',
+                                    child: ListTile(
+                                      leading: Icon(Icons.delete, color: Colors.red),
+                                      title: Text('Hapus User'),
+                                      contentPadding: EdgeInsets.zero,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
       ),
     );
   }
+}
+
+class _UserListItem {
+  final String? roleName;
+  final Map<String, dynamic>? user;
+  final bool isHeader;
+  _UserListItem({this.roleName, this.user, this.isHeader = false});
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/master_provider.dart';
+import '../../providers/auth_provider.dart';
 
 class ManageUnitScreen extends StatefulWidget {
   const ManageUnitScreen({super.key});
@@ -163,6 +164,8 @@ class _ManageUnitScreenState extends State<ManageUnitScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<MasterProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final isOperator = authProvider.currentUser?.role == 'operator';
     
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -225,45 +228,46 @@ class _ManageUnitScreenState extends State<ManageUnitScreen> {
                                 icon: const Icon(Icons.edit, color: Colors.blue),
                                 onPressed: () => _showForm(unit: unit),
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
-                                onPressed: () async {
-                                  final confirm = await showDialog<bool>(
-                                    context: context,
-                                    builder: (_) => AlertDialog(
-                                      title: const Text('Hapus Unit'),
-                                      content: Text(
-                                        'Yakin hapus ${unit['name']}?\n\nData terkait (kelas, guru, siswa) akan ikut terhapus.',
+                              if (!isOperator)
+                                IconButton(
+                                  icon: const Icon(Icons.delete, color: Colors.red),
+                                  onPressed: () async {
+                                    final confirm = await showDialog<bool>(
+                                      context: context,
+                                      builder: (_) => AlertDialog(
+                                        title: const Text('Hapus Unit'),
+                                        content: Text(
+                                          'Yakin hapus ${unit['name']}?\n\nData terkait (kelas, guru, siswa) akan ikut terhapus.',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(_, false),
+                                            child: const Text('Batal'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(_, true),
+                                            child: const Text('Hapus'),
+                                          ),
+                                        ],
                                       ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () => Navigator.pop(_, false),
-                                          child: const Text('Batal'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () => Navigator.pop(_, true),
-                                          child: const Text('Hapus'),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                  if (confirm == true) {
-                                    final success = await provider.deleteData(
-                                      'unit_pendidikan',
-                                      unit['id'],
                                     );
-                                    if (success && mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Unit dihapus'),
-                                          backgroundColor: Colors.green,
-                                        ),
+                                    if (confirm == true) {
+                                      final success = await provider.deleteData(
+                                        'unit_pendidikan',
+                                        unit['id'],
                                       );
-                                      _loadData();
+                                      if (success && mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text('Unit dihapus'),
+                                            backgroundColor: Colors.green,
+                                          ),
+                                        );
+                                        _loadData();
+                                      }
                                     }
-                                  }
-                                },
-                              ),
+                                  },
+                                ),
                             ],
                           ),
                         ),

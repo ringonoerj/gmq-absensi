@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/master_provider.dart';
+import '../../providers/auth_provider.dart';
 import '../../services/supabase_service.dart';
 import '../../models/unit_model.dart';
 import '../../models/kelas_model.dart';
+import '../../helpers/export_helper.dart';
 
 class ManageSiswaScreen extends StatefulWidget {
   const ManageSiswaScreen({super.key});
@@ -317,7 +319,30 @@ class _ManageSiswaScreenState extends State<ManageSiswaScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<MasterProvider>(context);
-    
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final isOperator = authProvider.currentUser?.role == 'operator';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    List<_SiswaListItem> listItems = [];
+    if (!provider.isLoading && provider.data.isNotEmpty) {
+      for (var unit in _unitList) {
+        final unitSiswas = provider.data.where((s) => s['unit_id'] == unit.id).toList();
+        if (unitSiswas.isNotEmpty) {
+          listItems.add(_SiswaListItem(unitName: unit.name, isHeader: true));
+          for (var s in unitSiswas) {
+            listItems.add(_SiswaListItem(siswa: s));
+          }
+        }
+      }
+      final orphanSiswas = provider.data.where((s) => !_unitList.any((u) => u.id == s['unit_id'])).toList();
+      if (orphanSiswas.isNotEmpty) {
+        listItems.add(_SiswaListItem(unitName: 'Tanpa Unit', isHeader: true));
+        for (var s in orphanSiswas) {
+          listItems.add(_SiswaListItem(siswa: s));
+        }
+      }
+    }
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showForm(),
@@ -339,107 +364,161 @@ class _ManageSiswaScreenState extends State<ManageSiswaScreen> {
                       ],
                     ),
                   )
-                : ListView.builder(
-                    padding: const EdgeInsets.only(bottom: 80),
-                    itemCount: provider.data.length,
-                    itemBuilder: (context, index) {
-                      final siswa = provider.data[index];
-                      final unit = _unitList.firstWhere(
-                        (u) => u.id == siswa['unit_id'],
-                        orElse: () => UnitModel(
-                          id: 0,
-                          name: '-',
-                          createdAt: DateTime.now(),
-                        ),
-                      );
-                      final kelas = _allKelasList.firstWhere(
-                        (k) => k.id == siswa['kelas_id'],
-                        orElse: () => KelasModel(
-                          id: 0,
-                          name: '-',
-                          unitId: 0,
-                          createdAt: DateTime.now(),
-                        ),
-                      );
-                      return Card(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor: Colors.purple.shade100,
-                            child: const Icon(
-                              Icons.people,
-                              color: Colors.purple,
+                : Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        color: isDark ? Colors.grey.shade900 : Colors.teal.shade50,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Total: ${provider.data.length} Siswa',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
-                          ),
-                          title: Text(
-                            siswa['name'],
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Unit: ${unit.name} | Kelas: ${kelas.name}'),
-                              if (siswa['nama_wali'] != null && (siswa['nama_wali'] as String).isNotEmpty)
-                                Text('Wali: ${siswa['nama_wali']}'),
-                              if (siswa['nis'] != null) Text('NIS: ${siswa['nis']}'),
-                            ],
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit, color: Colors.blue),
-                                onPressed: () => _showForm(siswa: siswa),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                ExportHelper().exportSiswa(
+                                  context,
+                                  data: provider.data,
+                                  unitList: _unitList,
+                                  kelasList: _allKelasList,
+                                );
+                              },
+                              icon: const Icon(Icons.download, size: 16),
+                              label: const Text('Ekspor Siswa'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.teal,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
-                                onPressed: () async {
-                                  final confirm = await showDialog<bool>(
-                                    context: context,
-                                    builder: (_) => AlertDialog(
-                                      title: const Text('Hapus Siswa'),
-                                      content: Text(
-                                        'Yakin hapus ${siswa['name']}?\n\nData absensi siswa ini akan ikut terhapus.',
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () => Navigator.pop(_, false),
-                                          child: const Text('Batal'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () => Navigator.pop(_, true),
-                                          child: const Text('Hapus'),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                  if (confirm == true) {
-                                    final success = await provider.deleteData(
-                                      'siswa',
-                                      siswa['id'],
-                                    );
-                                    if (success && mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Siswa dihapus'),
-                                          backgroundColor: Colors.green,
-                                        ),
-                                      );
-                                      _loadData();
-                                    }
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      );
-                    },
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          padding: const EdgeInsets.only(bottom: 80),
+                          itemCount: listItems.length,
+                          itemBuilder: (context, index) {
+                            final item = listItems[index];
+                            if (item.isHeader) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                color: isDark ? Colors.grey.shade800 : Colors.teal.shade100.withOpacity(0.4),
+                                width: double.infinity,
+                                child: Text(
+                                  item.unitName!,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: isDark ? Colors.teal.shade300 : Colors.teal.shade800,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              );
+                            }
+
+                            final siswa = item.siswa!;
+                            final kelas = _allKelasList.firstWhere(
+                              (k) => k.id == siswa['kelas_id'],
+                              orElse: () => KelasModel(
+                                id: 0,
+                                name: '-',
+                                unitId: 0,
+                                createdAt: DateTime.now(),
+                              ),
+                            );
+
+                            return Card(
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor: Colors.purple.shade100,
+                                  child: const Icon(
+                                    Icons.people,
+                                    color: Colors.purple,
+                                  ),
+                                ),
+                                title: Text(
+                                  siswa['name'],
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Kelas: ${kelas.name}'),
+                                    if (siswa['nama_wali'] != null && (siswa['nama_wali'] as String).isNotEmpty)
+                                      Text('Wali: ${siswa['nama_wali']}'),
+                                    if (siswa['nis'] != null) Text('NIS: ${siswa['nis']}'),
+                                  ],
+                                ),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.edit, color: Colors.blue),
+                                      onPressed: () => _showForm(siswa: siswa),
+                                    ),
+                                    if (!isOperator)
+                                      IconButton(
+                                        icon: const Icon(Icons.delete, color: Colors.red),
+                                        onPressed: () async {
+                                          final confirm = await showDialog<bool>(
+                                            context: context,
+                                            builder: (_) => AlertDialog(
+                                              title: const Text('Hapus Siswa'),
+                                              content: Text(
+                                                'Yakin hapus ${siswa['name']}?\n\nData absensi siswa ini akan ikut terhapus.',
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () => Navigator.pop(_, false),
+                                                  child: const Text('Batal'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () => Navigator.pop(_, true),
+                                                  child: const Text('Hapus'),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                          if (confirm == true) {
+                                            final success = await provider.deleteData(
+                                              'siswa',
+                                              siswa['id'],
+                                            );
+                                            if (success && mounted) {
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text('Siswa dihapus'),
+                                                  backgroundColor: Colors.green,
+                                                ),
+                                              );
+                                              _loadData();
+                                            }
+                                          }
+                                        },
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
       ),
     );
   }
+}
+
+class _SiswaListItem {
+  final String? unitName;
+  final Map<String, dynamic>? siswa;
+  final bool isHeader;
+  _SiswaListItem({this.unitName, this.siswa, this.isHeader = false});
 }
