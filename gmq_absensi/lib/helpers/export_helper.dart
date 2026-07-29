@@ -17,11 +17,7 @@ class ExportHelper {
     int? kelasId,
   }) async {
     // Show a loading dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
-    );
+    _showLoadingDialog(context, "Mengekspor Laporan...");
 
     try {
       // Build query
@@ -171,11 +167,7 @@ class ExportHelper {
     required List<Map<String, dynamic>> processedData,
   }) async {
     // Show a loading dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
-    );
+    _showLoadingDialog(context, "Mengekspor Laporan Insentif...");
 
     try {
       var excel = Excel.createExcel();
@@ -259,11 +251,7 @@ class ExportHelper {
     required List<Map<String, dynamic>> data,
     required List<UnitModel> unitList,
   }) async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
-    );
+    _showLoadingDialog(context, "Mengekspor Data Kelas...");
 
     try {
       var excel = Excel.createExcel();
@@ -341,11 +329,7 @@ class ExportHelper {
     required List<UnitModel> unitList,
     required List<KelasModel> kelasList,
   }) async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
-    );
+    _showLoadingDialog(context, "Mengekspor Data Guru...");
 
     try {
       var excel = Excel.createExcel();
@@ -451,11 +435,7 @@ class ExportHelper {
     required List<UnitModel> unitList,
     required List<KelasModel> kelasList,
   }) async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
-    );
+    _showLoadingDialog(context, "Mengekspor Data Siswa...");
 
     try {
       var excel = Excel.createExcel();
@@ -619,5 +599,29 @@ class ExportHelper {
         );
       }
     }
+  }
+
+  void _showLoadingDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => PopScope(
+        canPop: false,
+        child: AlertDialog(
+          content: Row(
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Text(
+                  message,
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

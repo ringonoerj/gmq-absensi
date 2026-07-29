@@ -10,12 +10,33 @@ class MasterProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   
-  Future<void> fetchData(String table, {String? orderBy, bool ascending = true, Map<String, dynamic>? filter}) async {
+  bool _hasMore = true;
+  bool get hasMore => _hasMore;
+  
+  Future<void> fetchData(
+    String table, {
+    String? orderBy,
+    bool ascending = true,
+    Map<String, dynamic>? filter,
+    bool loadMore = false,
+    bool paginate = false,
+    int pageSize = 25,
+  }) async {
+    if (loadMore && !_hasMore) return;
+    
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
     
     try {
+      if (!loadMore) {
+        _data = [];
+        _hasMore = true;
+      }
+      
+      int from = _data.length;
+      int to = from + pageSize - 1;
+      
       dynamic query = SupabaseService.client.from(table).select();
       
       if (filter != null) {
@@ -28,8 +49,24 @@ class MasterProvider extends ChangeNotifier {
         query = query.order(orderBy, ascending: ascending);
       }
       
+      if (paginate) {
+        query = query.range(from, to);
+      }
+      
       final response = await query;
-      _data = List<Map<String, dynamic>>.from(response);
+      final newItems = List<Map<String, dynamic>>.from(response);
+      
+      if (loadMore) {
+        _data.addAll(newItems);
+      } else {
+        _data = newItems;
+      }
+      
+      if (paginate) {
+        _hasMore = newItems.length == pageSize;
+      } else {
+        _hasMore = false;
+      }
     } catch (e) {
       _errorMessage = 'Error fetching $table: ${e.toString()}';
       print(_errorMessage);

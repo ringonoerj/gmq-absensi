@@ -6,7 +6,8 @@
 *credential*.txt
 secrets.txt
 gmq-absensi-kredensial.txt
-gmq-absensi-firebase-adminsdk-fbsvc-82c53638b0.json
+*.json
+!db_schema.json
 
 # Ignore log files
 *.log
