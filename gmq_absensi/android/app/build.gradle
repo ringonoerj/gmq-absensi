@@ -35,6 +35,29 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.debug
+            minifyEnabled false
+            shrinkResources false
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            if (variant.buildType.name == "release") {
+                def metadata = project.findProperty('releaseMetadata') ?: '20260729_00'
+                outputFileName = "gmq_super_app_${metadata}.apk"
+            }
+        }
+    }
+
+    tasks.whenTaskAdded { task ->
+        if (task.name == 'assembleRelease') {
+            task.doLast {
+                def metadata = project.findProperty('releaseMetadata') ?: '20260729_00'
+                copy {
+                    from "${buildDir}/outputs/apk/release/gmq_super_app_${metadata}.apk"
+                    into "${buildDir}/outputs/flutter-apk/"
+                }
+            }
         }
     }
 }

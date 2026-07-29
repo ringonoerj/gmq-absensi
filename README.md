@@ -172,11 +172,16 @@ Sebelum menjalankan aplikasi, pastikan skema basis data di Supabase sudah siap.
 
 #### **Android (Release APK)**
 Untuk membuat file instalasi APK Android:
-```bash
-cd gmq_absensi
-flutter build apk --release
-```
-Hasil file `.apk` akan tersimpan di: `gmq_absensi/build/app/outputs/flutter-apk/app-release.apk`
+1. Konfigurasikan metadata rilis di `gmq_absensi/android/gradle.properties`:
+   ```properties
+   releaseMetadata=yyyymmdd_xx
+   ```
+2. Jalankan perintah kompilasi:
+   ```bash
+   cd gmq_absensi
+   flutter build apk --release
+   ```
+Hasil file `.apk` akan tersimpan di: `gmq_absensi/build/app/outputs/flutter-apk/gmq_super_app_[metadata].apk` (misal: `gmq_super_app_20260729_00.apk`).
 
 #### **Flutter Web (Pengujian Lokal)**
 

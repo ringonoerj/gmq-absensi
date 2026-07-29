@@ -48,15 +48,16 @@ A cross-platform Flutter application for educational/school attendance tracking,
 ### Building for Android
 
 To build a release APK for Android:
-1. Navigate to the app directory:
-   ```bash
-   cd gmq_absensi
+1. Configure release metadata in `android/gradle.properties`:
+   ```properties
+   releaseMetadata=yyyymmdd_xx
    ```
 2. Run the build command:
    ```bash
+   cd gmq_absensi
    flutter build apk --release
    ```
-The generated APK will be located at: `gmq_absensi/build/app/outputs/flutter-apk/app-release.apk`
+The generated APK will be located at: `gmq_absensi/build/app/outputs/flutter-apk/gmq_super_app_[metadata].apk` (e.g., `gmq_super_app_20260729_00.apk`).
 
 
 ## Development & Deployment Rules

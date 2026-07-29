@@ -1,6 +1,6 @@
 {
-    "name": "gmq_absensi",
-    "short_name": "gmq_absensi",
+    "name": "GMQ Super App",
+    "short_name": "GMQ Super App",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
