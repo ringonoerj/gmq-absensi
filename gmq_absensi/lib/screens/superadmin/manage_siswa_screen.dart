@@ -39,7 +39,7 @@ class _ManageSiswaScreenState extends State<ManageSiswaScreen> {
   Future<void> _loadData() async {
     await Future.wait([
       Provider.of<MasterProvider>(context, listen: false)
-          .fetchData('siswa', orderBy: 'name'),
+          .fetchData('siswa', orderBy: 'name', paginate: true),
       _loadUnits(),
       _loadAllKelas(),
       _loadKategori(),
@@ -351,7 +351,7 @@ class _ManageSiswaScreenState extends State<ManageSiswaScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: _loadData,
-        child: provider.isLoading
+        child: (provider.isLoading && provider.data.isEmpty)
             ? const Center(child: CircularProgressIndicator())
             : provider.data.isEmpty
                 ? const Center(
@@ -399,8 +399,32 @@ class _ManageSiswaScreenState extends State<ManageSiswaScreen> {
                       Expanded(
                         child: ListView.builder(
                           padding: const EdgeInsets.only(bottom: 80),
-                          itemCount: listItems.length,
+                          itemCount: listItems.length + (provider.hasMore ? 1 : 0),
                           itemBuilder: (context, index) {
+                            if (index == listItems.length) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                child: Center(
+                                  child: provider.isLoading
+                                      ? const CircularProgressIndicator()
+                                      : ElevatedButton(
+                                          onPressed: () {
+                                            provider.fetchData(
+                                              'siswa',
+                                              orderBy: 'name',
+                                              loadMore: true,
+                                              paginate: true,
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.teal,
+                                            foregroundColor: Colors.white,
+                                          ),
+                                          child: const Text('Muat Lebih Banyak'),
+                                        ),
+                                ),
+                              );
+                            }
                             final item = listItems[index];
                             if (item.isHeader) {
                               return Container(
