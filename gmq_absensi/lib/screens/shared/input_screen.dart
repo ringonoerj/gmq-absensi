@@ -155,16 +155,22 @@ class _InputScreenState extends State<InputScreen> {
     }
   }
   
-  Future<void> _loadGuru(int unitId) async {
-    if (_isOffline) {
-      final cachedGuru = CacheService.getData('guru_$unitId');
-      if (cachedGuru != null) {
-        setState(() {
-          _guruList = (cachedGuru as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
-          _guruList.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
-        });
-        return;
+  Future<void> _loadGuru(int unitId, {int? kelasId}) async {
+    final cacheKey = 'guru_$unitId';
+    final cachedGuru = CacheService.getData(cacheKey);
+    if (cachedGuru != null) {
+      var list = (cachedGuru as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+      if (kelasId != null) {
+        list = list.where((g) {
+          final List<dynamic>? kIds = g['kelas_ids'] as List<dynamic>?;
+          return kIds != null && kIds.contains(kelasId);
+        }).toList();
       }
+      setState(() {
+        _guruList = list;
+        _guruList.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
+      });
+      if (_isOffline) return;
     }
     
     try {
@@ -173,15 +179,30 @@ class _InputScreenState extends State<InputScreen> {
           .select()
           .contains('unit_ids', [unitId])
           .order('name');
+      await CacheService.saveData(cacheKey, response);
+      
+      var list = List<Map<String, dynamic>>.from(response as List);
+      if (kelasId != null) {
+        list = list.where((g) {
+          final List<dynamic>? kIds = g['kelas_ids'] as List<dynamic>?;
+          return kIds != null && kIds.contains(kelasId);
+        }).toList();
+      }
       setState(() {
-        _guruList = List<Map<String, dynamic>>.from(response as List);
+        _guruList = list;
       });
-      await CacheService.saveData('guru_$unitId', response);
     } catch (e) {
-      final cachedGuru = CacheService.getData('guru_$unitId');
+      final cachedGuru = CacheService.getData(cacheKey);
       if (cachedGuru != null) {
+        var list = (cachedGuru as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+        if (kelasId != null) {
+          list = list.where((g) {
+            final List<dynamic>? kIds = g['kelas_ids'] as List<dynamic>?;
+            return kIds != null && kIds.contains(kelasId);
+          }).toList();
+        }
         setState(() {
-          _guruList = (cachedGuru as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+          _guruList = list;
           _guruList.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
         });
       }
@@ -463,6 +484,9 @@ class _InputScreenState extends State<InputScreen> {
     String? className = (_selectedKelasId != null && _kelasList.any((k) => k.id == _selectedKelasId))
         ? _kelasList.firstWhere((k) => k.id == _selectedKelasId).name 
         : null;
+
+    final finalKelasId = _selectedUserType == 'siswa' ? _selectedKelasId : null;
+    final finalClassName = _selectedUserType == 'siswa' ? className : null;
     
     // If offline, save to cache
     if (_isOffline) {
@@ -473,10 +497,10 @@ class _InputScreenState extends State<InputScreen> {
         status,
         izinReason,
         _selectedUnitId,
-        _selectedKelasId,
+        finalKelasId,
         userName,
         unitName,
-        className,
+        finalClassName,
       );
       setState(() => _isLoading = false);
       _showSuccess('Disimpan secara offline. Akan tersinkronisasi saat online.');
@@ -496,10 +520,10 @@ class _InputScreenState extends State<InputScreen> {
       izinReason: izinReason,
       recordedBy: SupabaseService.currentUserId!,
       unitId: _selectedUnitId,
-      kelasId: _selectedKelasId,
+      kelasId: finalKelasId,
       userName: userName,
       unitName: unitName,
-      className: className,
+      className: finalClassName,
     );
     
     setState(() => _isLoading = false);
@@ -662,8 +686,15 @@ class _InputScreenState extends State<InputScreen> {
                                   _selectedUserType = null;
                                   _selectedUserId = null;
                                 });
-                                if (v != null && _selectedUnitId != null) {
-                                  await _loadSiswa(_selectedUnitId!, v);
+                                if (_selectedUnitId != null) {
+                                  if (v != null) {
+                                    await _loadSiswa(_selectedUnitId!, v);
+                                  } else {
+                                    setState(() {
+                                      _siswaList = [];
+                                    });
+                                  }
+                                  await _loadGuru(_selectedUnitId!, kelasId: v);
                                 }
                               },
                             ),

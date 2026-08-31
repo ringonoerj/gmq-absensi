@@ -13,6 +13,7 @@ Proyek ini merupakan solusi terintegrasi yang mencakup aplikasi mobile/web multi
   - **Supervisor**: Melihat laporan kehadiran, statistik visual, grafik, dan mengekspor data ke Excel/PDF.
   - **Superadmin**: Manajemen master-data penuh (Unit Pendidikan, Kelas, Guru, Siswa, Pengguna), konfigurasi insentif harian guru, serta proses backup/restore data.
 - **Pencatatan Kehadiran Multi-Profil**: Guru dan siswa dapat terdaftar dan mencatat kehadiran di beberapa unit pendidikan atau kelas yang berbeda dalam hari yang sama.
+- **Penyaringan Laporan & Input Berbasis Relasi Dinamis**: Laporan dan input absensi guru/siswa disaring secara dinamis berdasarkan relasi Unit Pendidikan dan Kelas. Guru hanya dapat diinput atau dilihat kehadirannya pada kelas tempat mereka terdaftar/mengajar untuk mencegah duplikasi data.
 - **Validasi Hari Libur (Nasional & Spesifik Unit)**: Validasi otomatis terhadap tabel `libur_nasional`. Input kehadiran akan diblokir pada tanggal libur dengan menampilkan status "Libur".
 - **Metrik Laporan Komprehensif (H, I, S, A, L)**: Tampilan rekapitulasi kehadiran dengan 5 status utama: **Hadir (H), Izin (I), Sakit (S), Alpha (A), dan Libur (L)**. Dioptimalkan dengan batch loading untuk mencegah masalah performa *N+1 queries*.
 - **Standardisasi Urutan A-Z**: Semua menu pilihan (dropdown), tampilan daftar, dan ringkasan data diurutkan secara alfabetis menaik (A-Z) untuk kemudahan pencarian.
@@ -240,7 +241,7 @@ Metode ini paling disarankan untuk mensimulasikan lingkungan hosting Firebase ya
 2. **Tanpa Deploy Manual**: Jangan menjalankan perintah firebase deploy (`npx firebase deploy`) langsung dari komputer lokal Anda.
 3. **Penerapan via GitHub**:
    - Push perubahan kode yang sudah teruji ke cabang `main` di repositori GitHub.
-   - Pemicu GitHub Actions (`.github/workflows/firebase-hosting-merge.yml`) akan secara otomatis melakukan kompilasi web (`flutter build web`) dan merilis versi terbaru ke Firebase Hosting (**[gmq-absensi.web.app](https://gmq-absensi.web.app)**).
+   - Pemicu GitHub Actions (`.github/workflows/firebase-hosting-merge.yml`) akan secara otomatis melakukan kompilasi web (`flutter build web`) dan merilis versi terbaru ke Firebase Hosting (**[gmq-super-app.web.app](https://gmq-super-app.web.app)**).
 4. **Konfigurasi GitHub Secrets**:
    - Pastikan credential rahasia berikut sudah terkonfigurasi di GitHub Settings -> Secrets and variables -> Actions:
      - `FIREBASE_SERVICE_ACCOUNT_GMQ_ABSENSI`: Kunci token Service Account JSON Firebase untuk deployment otomatis.

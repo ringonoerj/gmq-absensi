@@ -43,7 +43,18 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      if (!_tabController.indexIsChanging) {
+        setState(() {});
+      }
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) => _loadData());
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
   
   Future<void> _loadData() async {
@@ -92,13 +103,18 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
     }
   }
   
-  Future<void> _loadGuru(int unitId) async {
+  Future<void> _loadGuru(int unitId, {int? kelasId}) async {
     try {
-      final response = await SupabaseService.client
+      var query = SupabaseService.client
           .from('guru')
           .select()
-          .contains('unit_ids', [unitId])
-          .order('name');
+          .contains('unit_ids', [unitId]);
+      
+      if (kelasId != null && kelasId != 0) {
+        query = query.contains('kelas_ids', [kelasId]);
+      }
+      
+      final response = await query.order('name');
       setState(() {
         _guruList = List<Map<String, dynamic>>.from(response as List);
       });
@@ -147,26 +163,42 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
       if (_selectedUnitId != null) {
         query = query.eq('unit_id', _selectedUnitId!);
       }
-      if (_selectedKelasId != null && _selectedKelasId != 0) {
+      if (_selectedKategori == 'siswa' && _selectedKelasId != null && _selectedKelasId != 0) {
         query = query.eq('kelas_id', _selectedKelasId!);
       }
       
       final response = await query;
       
+      // Sort response by ID ascending so the latest row (highest ID) wins
+      final List<Map<String, dynamic>> list = List<Map<String, dynamic>>.from(response as List);
+      list.sort((a, b) => (a['id'] as int).compareTo(b['id'] as int));
+
       final Map<DateTime, List<Color>> marks = {};
-      int hadir = 0, izin = 0, sakit = 0, alpha = 0;
+      final Map<DateTime, String> finalStatusPerDate = {};
       
-      for (var item in response) {
+      for (var item in list) {
         final parsedDate = DateTime.parse(item['date']);
         final date = DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
+        finalStatusPerDate[date] = item['status']?.toString().toLowerCase() ?? '';
+        
         Color color;
         switch (item['status']?.toString().toLowerCase()) {
-          case 'hadir': color = Colors.green; hadir++; break;
-          case 'izin': color = Colors.orange; izin++; break;
-          case 'sakit': color = Colors.blue; sakit++; break;
-          default: color = Colors.red; alpha++;
+          case 'hadir': color = Colors.green; break;
+          case 'izin': color = Colors.orange; break;
+          case 'sakit': color = Colors.blue; break;
+          default: color = Colors.red;
         }
         marks[date] = [color];
+      }
+      
+      int hadir = 0, izin = 0, sakit = 0, alpha = 0;
+      for (var status in finalStatusPerDate.values) {
+        switch (status) {
+          case 'hadir': hadir++; break;
+          case 'izin': izin++; break;
+          case 'sakit': sakit++; break;
+          default: alpha++;
+        }
       }
       
       // Running Month query (statistik bulan berjalan)
@@ -188,14 +220,23 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
         if (_selectedUnitId != null) {
           queryIni = queryIni.eq('unit_id', _selectedUnitId!);
         }
-        if (_selectedKelasId != null && _selectedKelasId != 0) {
+        if (_selectedKategori == 'siswa' && _selectedKelasId != null && _selectedKelasId != 0) {
           queryIni = queryIni.eq('kelas_id', _selectedKelasId!);
         }
         
         final responseIni = await queryIni;
-            
-        for (var item in responseIni) {
-          switch (item['status']?.toString().toLowerCase()) {
+        final List<Map<String, dynamic>> listIni = List<Map<String, dynamic>>.from(responseIni as List);
+        listIni.sort((a, b) => (a['id'] as int).compareTo(b['id'] as int));
+
+        final Map<DateTime, String> finalStatusPerDateIni = {};
+        for (var item in listIni) {
+          final parsedDate = DateTime.parse(item['date']);
+          final date = DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
+          finalStatusPerDateIni[date] = item['status']?.toString().toLowerCase() ?? '';
+        }
+
+        for (var status in finalStatusPerDateIni.values) {
+          switch (status) {
             case 'hadir': hadirIni++; break;
             case 'izin': izinIni++; break;
             case 'sakit': sakitIni++; break;
@@ -246,7 +287,7 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
       // Fetch all attendance for this month
       var absensiQuery = SupabaseService.client
           .from('absensi')
-          .select('user_id, status, unit_id, kelas_id, date')
+          .select('id, user_id, status, unit_id, kelas_id, date')
           .gte('date', startDate)
           .lte('date', endDate);
           
@@ -276,12 +317,24 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
         
         for (var guru in guruList) {
           final int guruId = guru['id'];
-          final guruAbsensi = absensiList.where((a) => a['user_id'] == guruId);
+          final guruAbsensi = absensiList.where((a) => a['user_id'] == guruId).toList();
+          guruAbsensi.sort((a, b) => ((a['id'] ?? 0) as int).compareTo((b['id'] ?? 0) as int));
           
-          int hadirCount = guruAbsensi.where((a) => a['status'] == 'hadir').length;
-          int izinCount = guruAbsensi.where((a) => a['status'] == 'izin').length;
-          int sakitCount = guruAbsensi.where((a) => a['status'] == 'sakit').length;
-          int alphaCount = guruAbsensi.where((a) => a['status'] == 'alpha').length;
+          final Map<String, String> statusPerDate = {};
+          for (var a in guruAbsensi) {
+            final String dateStr = a['date'].toString().split('T').first;
+            statusPerDate[dateStr] = a['status']?.toString().toLowerCase() ?? '';
+          }
+
+          int hadirCount = 0, izinCount = 0, sakitCount = 0, alphaCount = 0;
+          for (var status in statusPerDate.values) {
+            switch (status) {
+              case 'hadir': hadirCount++; break;
+              case 'izin': izinCount++; break;
+              case 'sakit': sakitCount++; break;
+              default: alphaCount++; break;
+            }
+          }
           
           final List<dynamic>? unitIds = guru['unit_ids'] as List<dynamic>?;
           int liburCount = countHolidaysForUnits(unitIds);
@@ -309,12 +362,24 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
         
         for (var siswa in siswaList) {
           final int siswaId = siswa['id'];
-          final siswaAbsensi = absensiList.where((a) => a['user_id'] == siswaId);
+          final siswaAbsensi = absensiList.where((a) => a['user_id'] == siswaId).toList();
+          siswaAbsensi.sort((a, b) => ((a['id'] ?? 0) as int).compareTo((b['id'] ?? 0) as int));
           
-          int hadirCount = siswaAbsensi.where((a) => a['status'] == 'hadir').length;
-          int izinCount = siswaAbsensi.where((a) => a['status'] == 'izin').length;
-          int sakitCount = siswaAbsensi.where((a) => a['status'] == 'sakit').length;
-          int alphaCount = siswaAbsensi.where((a) => a['status'] == 'alpha').length;
+          final Map<String, String> statusPerDate = {};
+          for (var a in siswaAbsensi) {
+            final String dateStr = a['date'].toString().split('T').first;
+            statusPerDate[dateStr] = a['status']?.toString().toLowerCase() ?? '';
+          }
+
+          int hadirCount = 0, izinCount = 0, sakitCount = 0, alphaCount = 0;
+          for (var status in statusPerDate.values) {
+            switch (status) {
+              case 'hadir': hadirCount++; break;
+              case 'izin': izinCount++; break;
+              case 'sakit': sakitCount++; break;
+              default: alphaCount++; break;
+            }
+          }
           
           final int? unitId = siswa['unit_id'] as int?;
           int liburCount = countHolidaysForUnit(unitId);
@@ -337,6 +402,24 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
     }
   }
   
+  String? get _selectedUnitName {
+    if (_selectedUnitId == null) return 'Semua Unit';
+    final unit = _unitList.firstWhere(
+      (u) => u.id == _selectedUnitId,
+      orElse: () => UnitModel(id: 0, name: 'Semua Unit', createdAt: DateTime.now()),
+    );
+    return unit.name;
+  }
+
+  String? get _selectedKelasName {
+    if (_selectedKelasId == null || _selectedKelasId == 0) return 'Semua Kelas';
+    final kelas = _kelasList.firstWhere(
+      (k) => k.id == _selectedKelasId,
+      orElse: () => KelasModel(id: 0, unitId: 0, name: 'Semua Kelas', createdAt: DateTime.now()),
+    );
+    return kelas.name;
+  }
+
   Future<void> _exportLaporan() async {
     final exportHelper = ExportHelper();
     await exportHelper.exportLaporan(
@@ -346,6 +429,28 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
       month: _focusedDay,
       unitId: _selectedUnitId,
       kelasId: _selectedKelasId,
+    );
+  }
+
+  Future<void> _exportSummary() async {
+    if (_summaryData.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Tidak ada data summary untuk diexport'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    final exportHelper = ExportHelper();
+    await exportHelper.exportSummaryLaporan(
+      context,
+      reportType: _summaryType,
+      month: _focusedDay,
+      summaryData: _summaryData,
+      unitName: _selectedUnitName,
+      kelasName: _summaryType == 'siswa' ? _selectedKelasName : null,
     );
   }
 
@@ -383,12 +488,22 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _selectedUserId != null ? _exportLaporan : null,
-        icon: const Icon(Icons.file_download, color: Colors.white),
-        label: const Text('Export', style: TextStyle(color: Colors.white)),
-        backgroundColor: _selectedUserId != null ? Colors.teal : Colors.grey,
-      ),
+      floatingActionButton: _tabController.index == 0
+          ? FloatingActionButton.extended(
+              onPressed: _selectedUserId != null ? _exportLaporan : null,
+              icon: const Icon(Icons.file_download, color: Colors.white),
+              label: const Text('Export User', style: TextStyle(color: Colors.white)),
+              backgroundColor: _selectedUserId != null ? Colors.teal : Colors.grey,
+            )
+          : FloatingActionButton.extended(
+              onPressed: _summaryData.isNotEmpty ? _exportSummary : null,
+              icon: const Icon(Icons.file_download, color: Colors.white),
+              label: Text(
+                'Export Rekap ${_summaryType == 'guru' ? 'Guru' : 'Siswa'}',
+                style: const TextStyle(color: Colors.white),
+              ),
+              backgroundColor: _summaryData.isNotEmpty ? Colors.teal : Colors.grey,
+            ),
       body: Column(
         children: [
           // Filter Bar
@@ -422,7 +537,8 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
                     });
                     if (v != null) {
                       await _loadKelas(v);
-                      await _loadGuru(v);
+                      await _loadGuru(v, kelasId: null);
+                      await _loadSiswa(v, 0);
                     }
                   },
                 ),
@@ -452,6 +568,7 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
                       });
                       if (_selectedUnitId != null) {
                         await _loadSiswa(_selectedUnitId!, _selectedKelasId ?? 0);
+                        await _loadGuru(_selectedUnitId!, kelasId: _selectedKelasId);
                       }
                     },
                   ),
@@ -633,6 +750,58 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
                   padding: const EdgeInsets.all(12),
                   child: Column(
                     children: [
+                      // Month Selector Banner for Summary
+                      Card(
+                        elevation: 0,
+                        color: Colors.teal.shade50,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(color: Colors.teal.shade200),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.chevron_left, color: Colors.teal),
+                                tooltip: 'Bulan Sebelumnya',
+                                onPressed: () async {
+                                  setState(() {
+                                    _focusedDay = DateTime(_focusedDay.year, _focusedDay.month - 1, 1);
+                                  });
+                                  await _loadSummary();
+                                },
+                              ),
+                              Row(
+                                children: [
+                                  const Icon(Icons.calendar_month, color: Colors.teal, size: 20),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Periode: ${_getMonthName(_focusedDay.month)} ${_focusedDay.year}',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                      color: Colors.teal,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.chevron_right, color: Colors.teal),
+                                tooltip: 'Bulan Berikutnya',
+                                onPressed: () async {
+                                  setState(() {
+                                    _focusedDay = DateTime(_focusedDay.year, _focusedDay.month + 1, 1);
+                                  });
+                                  await _loadSummary();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
                       Row(
                         children: [
                           Expanded(
@@ -653,6 +822,16 @@ class _LaporanScreenState extends State<LaporanScreen> with SingleTickerProvider
                             onPressed: _loadSummary,
                             icon: const Icon(Icons.refresh),
                             label: const Text('Refresh'),
+                          ),
+                          const SizedBox(width: 8),
+                          ElevatedButton.icon(
+                            onPressed: _summaryData.isNotEmpty ? _exportSummary : null,
+                            icon: const Icon(Icons.file_download),
+                            label: const Text('Export Rekap'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              foregroundColor: Colors.white,
+                            ),
                           ),
                         ],
                       ),

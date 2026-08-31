@@ -46,6 +46,11 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      if (!_tabController.indexIsChanging) {
+        setState(() {});
+      }
+    });
     _loadData();
   }
   
@@ -117,11 +122,19 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
     }
   }
   
-  Future<void> _loadGuru(int unitId) async {
-    final cachedGuru = CacheService.getData('guru_$unitId');
+  Future<void> _loadGuru(int unitId, {int? kelasId}) async {
+    final cacheKey = 'guru_$unitId';
+    final cachedGuru = CacheService.getData(cacheKey);
     if (cachedGuru != null) {
+      var list = (cachedGuru as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+      if (kelasId != null && kelasId != 0) {
+        list = list.where((g) {
+          final List<dynamic>? kIds = g['kelas_ids'] as List<dynamic>?;
+          return kIds != null && kIds.contains(kelasId);
+        }).toList();
+      }
       setState(() {
-        _guruList = (cachedGuru as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+        _guruList = list;
         _guruList.sort((a, b) => (a['name'] as String).compareTo(b['name'] as String));
       });
     }
@@ -132,10 +145,20 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
           .select()
           .contains('unit_ids', [unitId])
           .order('name');
+      
+      await CacheService.saveData(cacheKey, response);
+      
+      var list = List<Map<String, dynamic>>.from(response as List);
+      if (kelasId != null && kelasId != 0) {
+        list = list.where((g) {
+          final List<dynamic>? kIds = g['kelas_ids'] as List<dynamic>?;
+          return kIds != null && kIds.contains(kelasId);
+        }).toList();
+      }
+      
       setState(() {
-        _guruList = List<Map<String, dynamic>>.from(response as List);
+        _guruList = list;
       });
-      await CacheService.saveData('guru_$unitId', response);
     } catch (e) {
       // Use cache
     }
@@ -152,12 +175,16 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
     }
     
     try {
-      final response = await SupabaseService.client
+      var query = SupabaseService.client
           .from('siswa')
           .select()
-          .eq('unit_id', unitId)
-          .eq('kelas_id', kelasId)
-          .order('name');
+          .eq('unit_id', unitId);
+      
+      if (kelasId != 0) {
+        query = query.eq('kelas_id', kelasId);
+      }
+      
+      final response = await query.order('name');
       setState(() {
         _siswaList = List<Map<String, dynamic>>.from(response as List);
       });
@@ -191,37 +218,42 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
       if (_selectedUnitId != null) {
         query = query.eq('unit_id', _selectedUnitId!);
       }
-      if (_selectedKelasId != null && _selectedKelasId != 0) {
+      if (_selectedKategori == 'siswa' && _selectedKelasId != null && _selectedKelasId != 0) {
         query = query.eq('kelas_id', _selectedKelasId!);
       }
       
       final response = await query;
       
+      // Sort response by ID ascending so the latest row (highest ID) wins
+      final List<Map<String, dynamic>> list = List<Map<String, dynamic>>.from(response as List);
+      list.sort((a, b) => (a['id'] as int).compareTo(b['id'] as int));
+
       final Map<DateTime, List<Color>> marks = {};
-      int hadir = 0, izin = 0, sakit = 0, alpha = 0;
+      final Map<DateTime, String> finalStatusPerDate = {};
       
-      for (var item in response) {
+      for (var item in list) {
         final parsedDate = DateTime.parse(item['date']);
         final date = DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
+        finalStatusPerDate[date] = item['status']?.toString().toLowerCase() ?? '';
+        
         Color color;
-        switch (item['status']) {
-          case 'hadir':
-            color = Colors.green;
-            hadir++;
-            break;
-          case 'izin':
-            color = Colors.orange;
-            izin++;
-            break;
-          case 'sakit':
-            color = Colors.blue;
-            sakit++;
-            break;
-          default:
-            color = Colors.red;
-            alpha++;
+        switch (item['status']?.toString().toLowerCase()) {
+          case 'hadir': color = Colors.green; break;
+          case 'izin': color = Colors.orange; break;
+          case 'sakit': color = Colors.blue; break;
+          default: color = Colors.red;
         }
         marks[date] = [color];
+      }
+      
+      int hadir = 0, izin = 0, sakit = 0, alpha = 0;
+      for (var status in finalStatusPerDate.values) {
+        switch (status) {
+          case 'hadir': hadir++; break;
+          case 'izin': izin++; break;
+          case 'sakit': sakit++; break;
+          default: alpha++;
+        }
       }
       
       // Running Month query (statistik bulan berjalan)
@@ -249,14 +281,23 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
         if (_selectedUnitId != null) {
           queryIni = queryIni.eq('unit_id', _selectedUnitId!);
         }
-        if (_selectedKelasId != null && _selectedKelasId != 0) {
+        if (_selectedKategori == 'siswa' && _selectedKelasId != null && _selectedKelasId != 0) {
           queryIni = queryIni.eq('kelas_id', _selectedKelasId!);
         }
         
         final responseIni = await queryIni;
-                
-        for (var item in responseIni) {
-          switch (item['status']) {
+        final List<Map<String, dynamic>> listIni = List<Map<String, dynamic>>.from(responseIni as List);
+        listIni.sort((a, b) => (a['id'] as int).compareTo(b['id'] as int));
+
+        final Map<DateTime, String> finalStatusPerDateIni = {};
+        for (var item in listIni) {
+          final parsedDate = DateTime.parse(item['date']);
+          final date = DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
+          finalStatusPerDateIni[date] = item['status']?.toString().toLowerCase() ?? '';
+        }
+
+        for (var status in finalStatusPerDateIni.values) {
+          switch (status) {
             case 'hadir': hadirIni++; break;
             case 'izin': izinIni++; break;
             case 'sakit': sakitIni++; break;
@@ -310,7 +351,7 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
       // Fetch all attendance for this month
       var absensiQuery = SupabaseService.client
           .from('absensi')
-          .select('user_id, status, unit_id, kelas_id, date')
+          .select('id, user_id, status, unit_id, kelas_id, date')
           .gte('date', startDate)
           .lte('date', endDate);
           
@@ -340,12 +381,24 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
         
         for (var guru in guruList) {
           final int guruId = guru['id'];
-          final guruAbsensi = absensiList.where((a) => a['user_id'] == guruId);
+          final guruAbsensi = absensiList.where((a) => a['user_id'] == guruId).toList();
+          guruAbsensi.sort((a, b) => ((a['id'] ?? 0) as int).compareTo((b['id'] ?? 0) as int));
           
-          int hadirCount = guruAbsensi.where((a) => a['status'] == 'hadir').length;
-          int izinCount = guruAbsensi.where((a) => a['status'] == 'izin').length;
-          int sakitCount = guruAbsensi.where((a) => a['status'] == 'sakit').length;
-          int alphaCount = guruAbsensi.where((a) => a['status'] == 'alpha').length;
+          final Map<String, String> statusPerDate = {};
+          for (var a in guruAbsensi) {
+            final String dateStr = a['date'].toString().split('T').first;
+            statusPerDate[dateStr] = a['status']?.toString().toLowerCase() ?? '';
+          }
+
+          int hadirCount = 0, izinCount = 0, sakitCount = 0, alphaCount = 0;
+          for (var status in statusPerDate.values) {
+            switch (status) {
+              case 'hadir': hadirCount++; break;
+              case 'izin': izinCount++; break;
+              case 'sakit': sakitCount++; break;
+              default: alphaCount++; break;
+            }
+          }
           
           final List<dynamic>? unitIds = guru['unit_ids'] as List<dynamic>?;
           int liburCount = countHolidaysForUnits(unitIds);
@@ -373,12 +426,24 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
         
         for (var siswa in siswaList) {
           final int siswaId = siswa['id'];
-          final siswaAbsensi = absensiList.where((a) => a['user_id'] == siswaId);
+          final siswaAbsensi = absensiList.where((a) => a['user_id'] == siswaId).toList();
+          siswaAbsensi.sort((a, b) => ((a['id'] ?? 0) as int).compareTo((b['id'] ?? 0) as int));
           
-          int hadirCount = siswaAbsensi.where((a) => a['status'] == 'hadir').length;
-          int izinCount = siswaAbsensi.where((a) => a['status'] == 'izin').length;
-          int sakitCount = siswaAbsensi.where((a) => a['status'] == 'sakit').length;
-          int alphaCount = siswaAbsensi.where((a) => a['status'] == 'alpha').length;
+          final Map<String, String> statusPerDate = {};
+          for (var a in siswaAbsensi) {
+            final String dateStr = a['date'].toString().split('T').first;
+            statusPerDate[dateStr] = a['status']?.toString().toLowerCase() ?? '';
+          }
+
+          int hadirCount = 0, izinCount = 0, sakitCount = 0, alphaCount = 0;
+          for (var status in statusPerDate.values) {
+            switch (status) {
+              case 'hadir': hadirCount++; break;
+              case 'izin': izinCount++; break;
+              case 'sakit': sakitCount++; break;
+              default: alphaCount++; break;
+            }
+          }
           
           final int? unitId = siswa['unit_id'] as int?;
           int liburCount = countHolidaysForUnit(unitId);
@@ -401,6 +466,24 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
     setState(() => _isLoading = false);
   }
   
+  String? get _selectedUnitName {
+    if (_selectedUnitId == null) return 'Semua Unit';
+    final unit = _unitList.firstWhere(
+      (u) => u.id == _selectedUnitId,
+      orElse: () => UnitModel(id: 0, name: 'Semua Unit', createdAt: DateTime.now()),
+    );
+    return unit.name;
+  }
+
+  String? get _selectedKelasName {
+    if (_selectedKelasId == null || _selectedKelasId == 0) return 'Semua Kelas';
+    final kelas = _kelasList.firstWhere(
+      (k) => k.id == _selectedKelasId,
+      orElse: () => KelasModel(id: 0, unitId: 0, name: 'Semua Kelas', createdAt: DateTime.now()),
+    );
+    return kelas.name;
+  }
+
   Future<void> _exportLaporan() async {
     final exportHelper = ExportHelper();
     await exportHelper.exportLaporan(
@@ -412,15 +495,43 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
       kelasId: _selectedKelasId,
     );
   }
+
+  Future<void> _exportSummary() async {
+    if (_summaryData.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Tidak ada data summary untuk diexport'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    final exportHelper = ExportHelper();
+    await exportHelper.exportSummaryLaporan(
+      context,
+      reportType: _summaryType,
+      month: _focusedDay,
+      summaryData: _summaryData,
+      unitName: _selectedUnitName,
+      kelasName: _summaryType == 'siswa' ? _selectedKelasName : null,
+    );
+  }
   
   @override
   Widget build(BuildContext context) {
+    final bool showFab = _tabController.index == 0
+        ? _selectedUserId != null
+        : _summaryData.isNotEmpty;
+
     return Scaffold(
-      floatingActionButton: _selectedUserId != null
+      floatingActionButton: showFab
           ? FloatingActionButton.extended(
-              onPressed: _exportLaporan,
+              onPressed: _tabController.index == 0 ? _exportLaporan : _exportSummary,
               icon: const Icon(Icons.file_download),
-              label: const Text('Export'),
+              label: Text(_tabController.index == 0
+                  ? 'Export User'
+                  : 'Export Rekap ${_summaryType == 'guru' ? 'Guru' : 'Siswa'}'),
               backgroundColor: Colors.teal,
             )
           : null,
@@ -457,7 +568,8 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
                     });
                     if (v != null) {
                       await _loadKelas(v);
-                      await _loadGuru(v);
+                      await _loadGuru(v, kelasId: null);
+                      await _loadSiswa(v, 0);
                     }
                   },
                 ),
@@ -484,8 +596,9 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
                         _selectedKelasId = v == 0 ? null : v;
                         _selectedUserId = null;
                       });
-                      if (_selectedUnitId != null && v != null && v != 0) {
+                      if (_selectedUnitId != null && v != null) {
                         await _loadSiswa(_selectedUnitId!, v);
+                        await _loadGuru(_selectedUnitId!, kelasId: v);
                       }
                     },
                   ),
@@ -698,6 +811,58 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
                   padding: const EdgeInsets.all(12),
                   child: Column(
                     children: [
+                      // Month Selector Banner for Summary
+                      Card(
+                        elevation: 0,
+                        color: Colors.teal.shade50,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(color: Colors.teal.shade200),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.chevron_left, color: Colors.teal),
+                                tooltip: 'Bulan Sebelumnya',
+                                onPressed: () async {
+                                  setState(() {
+                                    _focusedDay = DateTime(_focusedDay.year, _focusedDay.month - 1, 1);
+                                  });
+                                  await _loadSummary();
+                                },
+                              ),
+                              Row(
+                                children: [
+                                  const Icon(Icons.calendar_month, color: Colors.teal, size: 18),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'Periode: ${_getMonthName(_focusedDay.month)} ${_focusedDay.year}',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                      color: Colors.teal,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.chevron_right, color: Colors.teal),
+                                tooltip: 'Bulan Berikutnya',
+                                onPressed: () async {
+                                  setState(() {
+                                    _focusedDay = DateTime(_focusedDay.year, _focusedDay.month + 1, 1);
+                                  });
+                                  await _loadSummary();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
                       Row(
                         children: [
                           Expanded(
@@ -714,10 +879,20 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
                             ),
                           ),
                           const SizedBox(width: 8),
-                          IconButton(
+                          IconButton.filledTonal(
                             onPressed: _loadSummary,
                             icon: const Icon(Icons.refresh),
                             tooltip: 'Refresh',
+                          ),
+                          const SizedBox(width: 4),
+                          IconButton.filled(
+                            onPressed: _summaryData.isNotEmpty ? _exportSummary : null,
+                            icon: const Icon(Icons.file_download),
+                            tooltip: 'Export Rekap',
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                              foregroundColor: Colors.white,
+                            ),
                           ),
                         ],
                       ),
