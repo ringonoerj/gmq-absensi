@@ -33,7 +33,7 @@ class ExportHelper {
       if (unitId != null) {
         query = query.eq('unit_id', unitId);
       }
-      if (kelasId != null && kelasId != 0) {
+      if (reportType == 'siswa' && kelasId != null && kelasId != 0) {
         query = query.eq('kelas_id', kelasId);
       }
       
@@ -159,6 +159,160 @@ class ExportHelper {
         );
       }
     }
+  }
+
+  Future<void> exportSummaryLaporan(
+    BuildContext context, {
+    required String reportType,
+    required DateTime month,
+    required List<Map<String, dynamic>> summaryData,
+    String? unitName,
+    String? kelasName,
+  }) async {
+    _showLoadingDialog(context, "Mengekspor Rekap Laporan Absensi...");
+
+    try {
+      var excel = Excel.createExcel();
+      final sheetName = reportType == 'guru' ? 'Rekap Absensi Guru' : 'Rekap Absensi Siswa';
+      Sheet sheetObject = excel[sheetName];
+
+      // Title & Header Info
+      final title = 'REKAPITULASI ABSENSI ${reportType.toUpperCase()}';
+      sheetObject.appendRow([title]);
+      sheetObject.appendRow(['Periode', '${_getMonthName(month.month)} ${month.year}']);
+      if (unitName != null && unitName.isNotEmpty) {
+        sheetObject.appendRow(['Unit Pendidikan', unitName]);
+      }
+      if (reportType == 'siswa' && kelasName != null && kelasName.isNotEmpty) {
+        sheetObject.appendRow(['Kelas', kelasName]);
+      }
+      sheetObject.appendRow([]); // Empty spacer row
+
+      // Table Header
+      sheetObject.appendRow([
+        'No',
+        reportType == 'guru' ? 'Nama Guru' : 'Nama Siswa',
+        'Hadir (H)',
+        'Izin (I)',
+        'Sakit (S)',
+        'Alpha (A)',
+        'Libur (L)',
+        'Total Hari',
+        '% Kehadiran',
+      ]);
+
+      // Data rows
+      int no = 1;
+      int totalHadir = 0;
+      int totalIzin = 0;
+      int totalSakit = 0;
+      int totalAlpha = 0;
+      int totalLibur = 0;
+
+      for (var item in summaryData) {
+        final hadir = (item['hadir'] ?? 0) as int;
+        final izin = (item['izin'] ?? 0) as int;
+        final sakit = (item['sakit'] ?? 0) as int;
+        final alpha = (item['alpha'] ?? 0) as int;
+        final libur = (item['libur'] ?? 0) as int;
+        final totalHari = hadir + izin + sakit + alpha + libur;
+
+        final int totalEfektif = hadir + izin + sakit + alpha;
+        final persentase = totalEfektif > 0
+            ? '${((hadir / totalEfektif) * 100).toStringAsFixed(1)}%'
+            : (totalHari > 0 ? '0.0%' : '-');
+
+        totalHadir += hadir;
+        totalIzin += izin;
+        totalSakit += sakit;
+        totalAlpha += alpha;
+        totalLibur += libur;
+
+        sheetObject.appendRow([
+          no++,
+          item['name']?.toString() ?? '-',
+          hadir,
+          izin,
+          sakit,
+          alpha,
+          libur,
+          totalHari,
+          persentase,
+        ]);
+      }
+
+      // Summary Total row
+      sheetObject.appendRow([]);
+      final int grandTotalEfektif = totalHadir + totalIzin + totalSakit + totalAlpha;
+      final String grandPercentage = grandTotalEfektif > 0
+          ? '${((totalHadir / grandTotalEfektif) * 100).toStringAsFixed(1)}%'
+          : '-';
+
+      sheetObject.appendRow([
+        'TOTAL',
+        '',
+        totalHadir,
+        totalIzin,
+        totalSakit,
+        totalAlpha,
+        totalLibur,
+        totalHadir + totalIzin + totalSakit + totalAlpha + totalLibur,
+        grandPercentage,
+      ]);
+
+      // Auto-fit columns
+      for (var columnIndex = 0; columnIndex < sheetObject.maxCols; columnIndex++) {
+        int maxLength = 0;
+        for (var rowIndex = 0; rowIndex < sheetObject.maxRows; rowIndex++) {
+          var cell = sheetObject.cell(CellIndex.indexByColumnRow(columnIndex: columnIndex, rowIndex: rowIndex));
+          String val = cell.value?.toString() ?? "";
+          if (val.length > maxLength) {
+            maxLength = val.length;
+          }
+        }
+        sheetObject.setColWidth(columnIndex, (maxLength + 4).toDouble().clamp(10.0, 45.0));
+      }
+
+      final safeUnit = unitName?.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_') ?? 'Semua';
+      final fileName = 'rekap_absensi_${reportType}_${safeUnit}_${month.year}_${month.month}.xlsx';
+      final bytes = excel.encode();
+      if (bytes != null) {
+        await saveBytesFile(fileName, bytes);
+      } else {
+        throw Exception('Gagal mengencode data Excel');
+      }
+
+      if (context.mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Rekap absensi berhasil diexport: $fileName'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal export rekap absensi: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  String _getMonthName(int month) {
+    const months = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+    if (month >= 1 && month <= 12) {
+      return months[month - 1];
+    }
+    return '';
   }
 
   Future<void> exportLaporanInsentif(

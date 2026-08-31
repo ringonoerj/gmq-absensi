@@ -335,4 +335,124 @@ class AbsensiProvider extends ChangeNotifier {
     
     return markedDates;
   }
+
+  Future<bool> updateOrCreateAbsensi({
+    required String userType,
+    required int userId,
+    required DateTime date,
+    required String status,
+    String? izinReason,
+    required String recordedBy,
+    int? unitId,
+    int? kelasId,
+  }) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+    
+    final isOnline = await CacheService.hasConnection();
+    if (!isOnline) {
+      _isLoading = false;
+      _errorMessage = 'Tidak dapat memperbarui absensi dalam mode offline.';
+      notifyListeners();
+      return false;
+    }
+    try {
+      final formattedDate = date.toIso8601String().split('T').first;
+      
+      // Check if record already exists for this user, type, date, and unit
+      var query = SupabaseService.client
+          .from('absensi')
+          .select('id')
+          .eq('user_type', userType)
+          .eq('user_id', userId)
+          .eq('date', formattedDate);
+          
+      if (unitId != null) {
+        query = query.eq('unit_id', unitId);
+      }
+      
+      final existing = await query;
+      
+      if ((existing as List).isNotEmpty) {
+        // Update existing record
+        final recordId = existing[0]['id'];
+        await SupabaseService.client.from('absensi').update({
+          'status': status,
+          'izin_reason': (status == 'izin' || status == 'sakit') ? izinReason : null,
+          'recorded_by': recordedBy,
+          'kelas_id': kelasId,
+        }).eq('id', recordId);
+      } else {
+        // Insert new record
+        await SupabaseService.client.from('absensi').insert({
+          'user_type': userType,
+          'user_id': userId,
+          'date': formattedDate,
+          'status': status,
+          'izin_reason': (status == 'izin' || status == 'sakit') ? izinReason : null,
+          'recorded_by': recordedBy,
+          'unit_id': unitId,
+          'kelas_id': kelasId,
+        });
+      }
+      
+      return true;
+    } catch (e) {
+      _errorMessage = 'Gagal memperbarui absensi: ${e.toString()}';
+      print(_errorMessage);
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> deleteAbsensi({
+    required String userType,
+    required int userId,
+    required DateTime date,
+    int? unitId,
+    int? kelasId,
+  }) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+    
+    final isOnline = await CacheService.hasConnection();
+    if (!isOnline) {
+      _isLoading = false;
+      _errorMessage = 'Tidak dapat menghapus absensi dalam mode offline.';
+      notifyListeners();
+      return false;
+    }
+    
+    try {
+      final formattedDate = date.toIso8601String().split('T').first;
+      var query = SupabaseService.client
+          .from('absensi')
+          .delete()
+          .eq('user_type', userType)
+          .eq('user_id', userId)
+          .eq('date', formattedDate);
+          
+      if (unitId != null) {
+        query = query.eq('unit_id', unitId);
+      }
+      if (kelasId != null) {
+        query = query.eq('kelas_id', kelasId);
+      }
+      
+      await query;
+      return true;
+    } catch (e) {
+      _errorMessage = 'Gagal menghapus absensi: ${e.toString()}';
+      print(_errorMessage);
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }
+
