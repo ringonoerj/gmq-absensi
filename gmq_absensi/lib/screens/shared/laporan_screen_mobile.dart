@@ -351,7 +351,7 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
       // Fetch all attendance for this month
       var absensiQuery = SupabaseService.client
           .from('absensi')
-          .select('user_id, status, unit_id, kelas_id, date')
+          .select('id, user_id, status, unit_id, kelas_id, date')
           .gte('date', startDate)
           .lte('date', endDate);
           
@@ -381,12 +381,24 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
         
         for (var guru in guruList) {
           final int guruId = guru['id'];
-          final guruAbsensi = absensiList.where((a) => a['user_id'] == guruId);
+          final guruAbsensi = absensiList.where((a) => a['user_id'] == guruId).toList();
+          guruAbsensi.sort((a, b) => ((a['id'] ?? 0) as int).compareTo((b['id'] ?? 0) as int));
           
-          int hadirCount = guruAbsensi.where((a) => a['status'] == 'hadir').length;
-          int izinCount = guruAbsensi.where((a) => a['status'] == 'izin').length;
-          int sakitCount = guruAbsensi.where((a) => a['status'] == 'sakit').length;
-          int alphaCount = guruAbsensi.where((a) => a['status'] == 'alpha').length;
+          final Map<String, String> statusPerDate = {};
+          for (var a in guruAbsensi) {
+            final String dateStr = a['date'].toString().split('T').first;
+            statusPerDate[dateStr] = a['status']?.toString().toLowerCase() ?? '';
+          }
+
+          int hadirCount = 0, izinCount = 0, sakitCount = 0, alphaCount = 0;
+          for (var status in statusPerDate.values) {
+            switch (status) {
+              case 'hadir': hadirCount++; break;
+              case 'izin': izinCount++; break;
+              case 'sakit': sakitCount++; break;
+              default: alphaCount++; break;
+            }
+          }
           
           final List<dynamic>? unitIds = guru['unit_ids'] as List<dynamic>?;
           int liburCount = countHolidaysForUnits(unitIds);
@@ -414,12 +426,24 @@ class _LaporanScreenMobileState extends State<LaporanScreenMobile>
         
         for (var siswa in siswaList) {
           final int siswaId = siswa['id'];
-          final siswaAbsensi = absensiList.where((a) => a['user_id'] == siswaId);
+          final siswaAbsensi = absensiList.where((a) => a['user_id'] == siswaId).toList();
+          siswaAbsensi.sort((a, b) => ((a['id'] ?? 0) as int).compareTo((b['id'] ?? 0) as int));
           
-          int hadirCount = siswaAbsensi.where((a) => a['status'] == 'hadir').length;
-          int izinCount = siswaAbsensi.where((a) => a['status'] == 'izin').length;
-          int sakitCount = siswaAbsensi.where((a) => a['status'] == 'sakit').length;
-          int alphaCount = siswaAbsensi.where((a) => a['status'] == 'alpha').length;
+          final Map<String, String> statusPerDate = {};
+          for (var a in siswaAbsensi) {
+            final String dateStr = a['date'].toString().split('T').first;
+            statusPerDate[dateStr] = a['status']?.toString().toLowerCase() ?? '';
+          }
+
+          int hadirCount = 0, izinCount = 0, sakitCount = 0, alphaCount = 0;
+          for (var status in statusPerDate.values) {
+            switch (status) {
+              case 'hadir': hadirCount++; break;
+              case 'izin': izinCount++; break;
+              case 'sakit': sakitCount++; break;
+              default: alphaCount++; break;
+            }
+          }
           
           final int? unitId = siswa['unit_id'] as int?;
           int liburCount = countHolidaysForUnit(unitId);

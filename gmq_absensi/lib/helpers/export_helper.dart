@@ -76,20 +76,28 @@ class ExportHelper {
         }
       }
       
-      // Construct data
-      List<Map<String, dynamic>> dataWithNames = [];
+      // Sort ascending so highest ID wins if there are multiple entries on the same day
+      absensiList.sort((a, b) => (a['id'] as int).compareTo(b['id'] as int));
+
+      // Construct data (deduplicate per user per date)
+      final Map<String, Map<String, dynamic>> deduplicatedData = {};
       for (var item in absensiList) {
         final uId = item['user_id'] as int;
         final uType = item['user_type'] as String;
         final name = (uType == 'guru' ? guruNames[uId] : siswaNames[uId]) ?? '-';
+        final String dateStr = item['date'].toString().split('T').first;
+        final String key = '${uType}_${uId}_$dateStr';
         
-        dataWithNames.add({
+        deduplicatedData[key] = {
           'name': name,
-          'date': item['date'],
+          'date': dateStr,
           'status': item['status'],
           'reason': item['izin_reason'] ?? '-',
-        });
+        };
       }
+      
+      final List<Map<String, dynamic>> dataWithNames = deduplicatedData.values.toList();
+      dataWithNames.sort((a, b) => (a['date'] as String).compareTo(b['date'] as String));
       
       // Create Excel
       var excel = Excel.createExcel();

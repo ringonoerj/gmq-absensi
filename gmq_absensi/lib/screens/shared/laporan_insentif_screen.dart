@@ -95,14 +95,17 @@ class _LaporanInsentifGuruScreenState extends State<LaporanInsentifGuruScreen> {
       rateMap['${gId}_$uId'] = nominal;
     }
 
-    // Create attendance mapping count: { "guru_id_unit_id": count_hadir }
-    final Map<String, int> attendanceMap = {};
+    // Create attendance mapping count (unique hadir dates): { "guru_id_unit_id": Set<dateStr> }
+    final Map<String, Set<String>> hadirDatesMap = {};
     for (var a in _absensiList) {
+      if (a['status']?.toString().toLowerCase() != 'hadir') continue;
       final int guruId = a['user_id'] as int;
       final int? unitId = a['unit_id'] as int?;
+      final String dateStr = a['date'].toString().split('T').first;
+
       if (unitId != null) {
         final key = '${guruId}_$unitId';
-        attendanceMap[key] = (attendanceMap[key] ?? 0) + 1;
+        hadirDatesMap.putIfAbsent(key, () => <String>{}).add(dateStr);
       } else {
         // Fallback for legacy records: map to guru's legacy unit_id or first unit in unit_ids
         final guru = _gurus.firstWhere((g) => g['id'] == guruId, orElse: () => {});
@@ -111,10 +114,10 @@ class _LaporanInsentifGuruScreenState extends State<LaporanInsentifGuruScreen> {
           final List<dynamic>? uIds = guru['unit_ids'] as List<dynamic>?;
           if (legacyUnitId != null) {
             final key = '${guruId}_$legacyUnitId';
-            attendanceMap[key] = (attendanceMap[key] ?? 0) + 1;
+            hadirDatesMap.putIfAbsent(key, () => <String>{}).add(dateStr);
           } else if (uIds != null && uIds.isNotEmpty) {
             final key = '${guruId}_${uIds.first}';
-            attendanceMap[key] = (attendanceMap[key] ?? 0) + 1;
+            hadirDatesMap.putIfAbsent(key, () => <String>{}).add(dateStr);
           }
         }
       }
@@ -145,7 +148,7 @@ class _LaporanInsentifGuruScreenState extends State<LaporanInsentifGuruScreen> {
           final int guruId = guru['id'] as int;
           final String guruName = guru['name'] as String;
           
-          final int hadirCount = attendanceMap['${guruId}_$unitId'] ?? 0;
+          final int hadirCount = hadirDatesMap['${guruId}_$unitId']?.length ?? 0;
           final int rate = rateMap['${guruId}_$unitId'] ?? 0;
           final int totalIncentive = hadirCount * rate;
 
